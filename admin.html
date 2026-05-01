@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel - Jaiclub</title>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f1e;
+    color: #d7d7d7;
+    min-height: 100vh;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  h1 { color: #a08fff; text-align: center; margin-bottom: 20px; font-size: 22px; }
+  
+  /* Login */
+  .login-box { max-width: 300px; margin: 80px auto; text-align: center; }
+  .login-box input {
+    width: 100%; padding: 12px; margin: 10px 0;
+    background: #1e1e3a; border: 1px solid #3e3e60; border-radius: 8px;
+    color: #fff; font-size: 16px; outline: none;
+  }
+  .login-box button {
+    width: 100%; padding: 12px; margin-top: 10px;
+    background: #a08fff; border: none; border-radius: 8px;
+    color: #fff; font-size: 16px; cursor: pointer; font-weight: 600;
+  }
+  .login-box button:hover { background: #8a7ae0; }
+  .error { color: #ff6b6b; font-size: 13px; margin-top: 8px; }
+  
+  /* Panel */
+  .panel { display: none; }
+  .panel.active { display: block; }
+  
+  .section {
+    background: #1e1e3a; border-radius: 10px;
+    padding: 16px; margin-bottom: 16px;
+    border: 1px solid #2e2e50;
+  }
+  .section h2 { font-size: 16px; color: #a08fff; margin-bottom: 12px; }
+  
+  label { display: block; font-size: 13px; color: #888; margin: 8px 0 4px; }
+  input, select {
+    width: 100%; padding: 10px;
+    background: #0f0f1e; border: 1px solid #3e3e60; border-radius: 6px;
+    color: #fff; font-size: 14px; outline: none;
+  }
+  
+  .btn {
+    padding: 10px 20px; border: none; border-radius: 8px;
+    cursor: pointer; font-size: 14px; font-weight: 600;
+    margin: 4px;
+  }
+  .btn-primary { background: #a08fff; color: #fff; }
+  .btn-primary:hover { background: #8a7ae0; }
+  .btn-danger { background: #ff4757; color: #fff; }
+  .btn-success { background: #2ed573; color: #fff; }
+  
+  .btn-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  
+  .card-entry {
+    background: #0f0f1e; border: 1px solid #3e3e60; border-radius: 8px;
+    padding: 12px; margin-bottom: 8px;
+  }
+  .card-entry .card-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 8px;
+  }
+  .card-entry .card-header span { color: #a08fff; font-weight: 600; }
+  .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  
+  .status-msg {
+    padding: 10px; border-radius: 6px; text-align: center;
+    margin: 10px 0; font-size: 14px; display: none;
+  }
+  .status-msg.show { display: block; }
+  .status-msg.success { background: rgba(46,213,115,0.2); color: #2ed573; }
+  .status-msg.error { background: rgba(255,71,87,0.2); color: #ff4757; }
+</style>
+</head>
+<body>
+
+<!-- Login Screen -->
+<div class="login-box" id="loginBox">
+  <h1>🔐 Admin Panel</h1>
+  <input type="password" id="pwdInput" placeholder="Enter password" onkeyup="if(event.key==='Enter')login()">
+  <button onclick="login()">Login</button>
+  <div class="error" id="loginError"></div>
+</div>
+
+<!-- Admin Panel -->
+<div class="panel" id="adminPanel">
+  <h1>📊 Jaiclub Admin</h1>
+  
+  <!-- Date Selection -->
+  <div class="section">
+    <h2>📅 Select Date</h2>
+    <input type="date" id="adminDate" onchange="loadAdminData()">
+  </div>
+  
+  <!-- Stats -->
+  <div class="section">
+    <h2>📈 Stats</h2>
+    <div class="card-grid">
+      <div><label>Deposit Number</label><input type="number" id="aDepositNum" value="0"></div>
+      <div><label>Deposit Amount</label><input type="number" id="aDepositAmt" value="0"></div>
+      <div><label>Number of Bettors</label><input type="number" id="aBettors" value="0"></div>
+      <div><label>Total Bet</label><input type="number" id="aTotalBet" value="0"></div>
+      <div><label>First Deposit People</label><input type="number" id="aFirstPpl" value="0"></div>
+      <div><label>First Deposit Amount</label><input type="number" id="aFirstAmt" value="0"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveStats()">💾 Save Stats</button>
+    </div>
+  </div>
+  
+  <!-- Cards -->
+  <div class="section">
+    <h2>👥 User Cards</h2>
+    <div id="cardsList"></div>
+    <div class="btn-row">
+      <button class="btn btn-success" onclick="addCard()">➕ Add Card</button>
+      <button class="btn btn-primary" onclick="saveCards()">💾 Save All Cards</button>
+    </div>
+  </div>
+  
+  <div class="status-msg" id="statusMsg"></div>
+</div>
+
+<script>
+const ADMIN_PWD = 'admin123';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDummy",
+  authDomain: "jaiclub-data.firebaseapp.com",
+  databaseURL: "https://jaiclub-data-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "jaiclub-data",
+  storageBucket: "jaiclub-data.appspot.com",
+  messagingSenderId: "000000000",
+  appId: "1:000:web:000"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+let cards = [];
+
+function login() {
+  const pwd = document.getElementById('pwdInput').value;
+  if (pwd === ADMIN_PWD) {
+    document.getElementById('loginBox').style.display = 'none';
+    document.getElementById('adminPanel').classList.add('active');
+    // Set date to yesterday
+    const y = new Date();
+    y.setDate(y.getDate() - 1);
+    document.getElementById('adminDate').value = y.toISOString().split('T')[0];
+    loadAdminData();
+  } else {
+    document.getElementById('loginError').textContent = 'Wrong password!';
+  }
+}
+
+function loadAdminData() {
+  const date = document.getElementById('adminDate').value;
+  if (!date) return;
+  
+  db.ref(`dates/${date}`).once('value').then(snap => {
+    const data = snap.val() || {};
+    
+    // Stats
+    const s = data.stats || {};
+    document.getElementById('aDepositNum').value = s.depositNum || 0;
+    document.getElementById('aDepositAmt').value = s.depositAmt || 0;
+    document.getElementById('aBettors').value = s.bettors || 0;
+    document.getElementById('aTotalBet').value = s.totalBet || 0;
+    document.getElementById('aFirstPpl').value = s.firstPpl || 0;
+    document.getElementById('aFirstAmt').value = s.firstAmt || 0;
+    
+    // Cards
+    cards = [];
+    if (data.cards) {
+      Object.values(data.cards).forEach(c => {
+        cards.push({ uid: c.uid || '', level: c.level || 1, deposit: c.deposit || 0, commission: c.commission || 0 });
+      });
+    }
+    renderAdminCards();
+    showStatus('Data loaded!', 'success');
+  });
+}
+
+function renderAdminCards() {
+  const list = document.getElementById('cardsList');
+  list.innerHTML = cards.map((c, i) => `
+    <div class="card-entry">
+      <div class="card-header">
+        <span>Card #${i + 1}</span>
+        <button class="btn btn-danger" style="padding:4px 10px;font-size:12px" onclick="removeCard(${i})">✕</button>
+      </div>
+      <div class="card-grid">
+        <div><label>UID</label><input value="${c.uid}" onchange="cards[${i}].uid=this.value"></div>
+        <div><label>Level</label><input type="number" value="${c.level}" min="1" max="6" onchange="cards[${i}].level=parseInt(this.value)"></div>
+        <div><label>Deposit</label><input type="number" value="${c.deposit}" onchange="cards[${i}].deposit=parseFloat(this.value)"></div>
+        <div><label>Commission</label><input type="number" step="0.01" value="${c.commission}" onchange="cards[${i}].commission=parseFloat(this.value)"></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addCard() {
+  cards.push({ uid: '', level: 1, deposit: 0, commission: 0 });
+  renderAdminCards();
+}
+
+function removeCard(i) {
+  cards.splice(i, 1);
+  renderAdminCards();
+}
+
+function saveStats() {
+  const date = document.getElementById('adminDate').value;
+  if (!date) return showStatus('Select a date first!', 'error');
+  
+  const stats = {
+    depositNum: parseInt(document.getElementById('aDepositNum').value) || 0,
+    depositAmt: parseInt(document.getElementById('aDepositAmt').value) || 0,
+    bettors: parseInt(document.getElementById('aBettors').value) || 0,
+    totalBet: parseInt(document.getElementById('aTotalBet').value) || 0,
+    firstPpl: parseInt(document.getElementById('aFirstPpl').value) || 0,
+    firstAmt: parseInt(document.getElementById('aFirstAmt').value) || 0,
+  };
+  
+  db.ref(`dates/${date}/stats`).set(stats).then(() => {
+    showStatus('Stats saved! ✅', 'success');
+  }).catch(e => showStatus('Error: ' + e.message, 'error'));
+}
+
+function saveCards() {
+  const date = document.getElementById('adminDate').value;
+  if (!date) return showStatus('Select a date first!', 'error');
+  
+  const cardsObj = {};
+  cards.forEach((c, i) => { cardsObj[`card${i}`] = c; });
+  
+  db.ref(`dates/${date}/cards`).set(cardsObj).then(() => {
+    showStatus(`${cards.length} cards saved! ✅`, 'success');
+  }).catch(e => showStatus('Error: ' + e.message, 'error'));
+}
+
+function showStatus(msg, type) {
+  const el = document.getElementById('statusMsg');
+  el.textContent = msg;
+  el.className = `status-msg show ${type}`;
+  setTimeout(() => el.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>

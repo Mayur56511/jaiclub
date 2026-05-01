@@ -3,167 +3,246 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Subordinate data</title>
+<title>Jaiclub</title>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-    background: #f5f6fa;
-    color: #333;
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, Roboto, 'PingFang SC', miui, 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
+    background: #1a1a2c;
+    color: #d7d7d7;
     min-height: 100vh;
-    max-width: 480px;
+    max-width: 430px;
     margin: 0 auto;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
 
-  /* Header */
-  .header {
-    display: flex;
-    align-items: center;
-    padding: 14px 16px;
-    background: #fff;
-    border-bottom: 1px solid #eee;
-    position: sticky;
-    top: 0;
-    z-index: 10;
+  /* Navbar */
+  .navbar {
+    display: flex; align-items: center;
+    padding: 14px 12px;
+    position: sticky; top: 0; z-index: 10;
+    background: #1a1a2c;
   }
-  .header .back-btn {
-    background: none; border: none; color: #333;
-    font-size: 24px; cursor: pointer; padding: 4px 8px;
+  .navbar .back-btn {
+    background: none; border: none; color: #fff;
+    font-size: 28px; cursor: pointer; padding: 0 8px 0 0;
     line-height: 1;
   }
-  .header h1 {
-    flex: 1; text-align: center; font-size: 17px;
-    font-weight: 600; color: #222; margin-right: 32px;
+  .navbar h1 {
+    flex: 1; text-align: center; font-size: 19px;
+    font-weight: 400; color: #fff; margin-right: 36px;
   }
 
   /* Search Bar */
   .search-bar {
-    margin: 16px 16px 12px;
-    display: flex;
-    background: #fff;
+    margin: 0 12px 10px;
+    display: flex; align-items: center;
+    background: #22224b;
     border-radius: 8px;
-    overflow: hidden;
-    border: 1px solid #e0e0e0;
     height: 44px;
+    overflow: hidden;
   }
   .search-bar input {
     flex: 1; padding: 0 14px;
     background: transparent; border: none;
-    color: #333; font-size: 14px; outline: none;
+    color: #fff; font-size: 15px; outline: none;
   }
-  .search-bar input::placeholder { color: #b0b0b0; }
-  .search-bar button {
-    background: #4a6cf7; border: none; padding: 0 20px;
+  .search-bar input::placeholder { color: rgba(255,255,255,0.35); }
+  .search-bar .search-icon-wrap {
+    background: rgba(160,143,255,0.25);
+    border: none; padding: 0; margin-right: 6px;
     cursor: pointer; display: flex; align-items: center; justify-content: center;
-    min-width: 52px;
+    width: 40px; height: 32px; border-radius: 8px;
   }
-  .search-bar button svg { width: 20px; height: 20px; fill: white; }
+  .search-bar .search-icon-wrap svg { width: 20px; height: 20px; fill: #000; }
 
   /* Filters */
   .filters {
-    display: flex; gap: 12px;
-    margin: 0 16px 16px;
+    display: flex; gap: 10px;
+    margin: 0 12px 12px;
   }
-  .filter-select {
-    flex: 1; padding: 11px 14px;
-    background: #fff; border: 1px solid #e0e0e0;
-    border-radius: 8px; color: #333;
+  .filter-btn {
+    flex: 1; padding: 10px 14px;
+    background: #22224b; border: none;
+    border-radius: 8px; color: #d7d7d7;
     font-size: 14px; cursor: pointer;
-    appearance: none; -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='%23999'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    background-size: 16px;
-    padding-right: 32px;
+    text-align: left;
+    position: relative;
   }
-  .filter-select option { background: #fff; color: #333; }
+  .filter-btn::after {
+    content: '▾'; position: absolute; right: 12px; top: 50%;
+    transform: translateY(-50%); color: #888; font-size: 12px;
+  }
 
   /* Stats Card */
   .stats-card {
-    margin: 0 16px 20px;
-    background: linear-gradient(135deg, #5b7bf9, #4a8af7);
-    border-radius: 14px;
-    padding: 0;
+    margin: 0 12px 12px;
+    background: #a08fff;
+    border-radius: 10px;
+    padding: 20px 0;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    overflow: hidden;
   }
   .stat-item {
-    padding: 18px 12px;
+    padding: 8px 12px;
     text-align: center;
     position: relative;
   }
-  /* Vertical dividers */
-  .stat-item:nth-child(odd) {
-    border-right: 1px solid rgba(255,255,255,0.25);
+  .stat-item:nth-child(odd) { border-right: 1px solid rgba(0,0,0,0.12); }
+  .stat-item:nth-child(1), .stat-item:nth-child(2) { border-bottom: 1px solid rgba(0,0,0,0.12); }
+  .stat-item:nth-child(3), .stat-item:nth-child(4) { border-bottom: 1px solid rgba(0,0,0,0.12); }
+  .stat-number { font-size: 22px; font-weight: 700; color: #fff; line-height: 1.2; }
+  .stat-label { font-size: 12px; color: rgba(255,255,255,0.85); margin-top: 4px; }
+
+  /* Loading spinner */
+  .loading-spinner {
+    text-align: center; padding: 12px 0; display: none;
   }
-  /* Horizontal dividers */
-  .stat-item:nth-child(1), .stat-item:nth-child(2) {
-    border-bottom: 1px solid rgba(255,255,255,0.25);
+  .loading-spinner.active { display: block; }
+  .loading-spinner::after {
+    content: ''; display: inline-block;
+    width: 18px; height: 18px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
   }
-  .stat-item:nth-child(3), .stat-item:nth-child(4) {
-    border-bottom: 1px solid rgba(255,255,255,0.25);
-  }
-  .stat-number {
-    font-size: 26px; font-weight: 700; color: #fff;
-    line-height: 1.2;
-  }
-  .stat-label {
-    font-size: 12px; color: rgba(255,255,255,0.85);
-    margin-top: 4px; line-height: 1.3;
-  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
   /* User Cards */
-  .user-list { padding: 0 16px 100px; }
+  .user-list { padding: 0 12px 100px; }
   .user-card {
-    background: #fff;
-    border-radius: 12px;
-    margin-bottom: 14px;
-    border: 1px solid #e8e8e8;
-    overflow: hidden;
+    background: #2a2a4a;
+    border-radius: 5px;
+    margin-bottom: 12px;
+    padding: 0 11px;
+    border: 1px solid #3e3e60;
   }
   .user-card-header {
     display: flex; align-items: center;
-    padding: 14px 16px;
-    border-bottom: 1px solid #f0f0f0;
+    padding: 5px 0 0;
+    border-bottom: 1px solid #4c4380;
+    height: 37px;
   }
-  .uid {
-    font-size: 16px; font-weight: 600; color: #222;
-  }
+  .uid { font-size: 16px; font-weight: 400; color: #fff; }
   .copy-btn {
     background: none; border: none; cursor: pointer;
-    margin-left: 12px; color: #999; font-size: 18px;
-    display: flex; align-items: center;
+    margin-left: 2px; display: flex; align-items: center;
+    padding: 4px;
   }
-  .copy-btn svg { width: 18px; height: 18px; fill: #999; }
-  .user-rows { padding: 4px 0; }
+  .copy-btn svg { width: 18px; height: 18px; }
+  .user-rows { padding: 12px 0; }
   .user-row {
-    display: flex; justify-content: space-between;
-    padding: 10px 16px;
+    display: flex; justify-content: space-between; align-items: center;
+    height: 16px;
   }
-  .user-row-label { color: #888; font-size: 14px; }
-  .user-row-value { color: #e8a040; font-size: 14px; font-weight: 500; }
-  .user-row-value.neutral { color: #555; }
-  .user-row-value.time { color: #bbb; font-weight: 400; }
+  .user-row + .user-row { margin-top: 12px; }
+  .user-row-label { color: #d7d7d7; font-size: 14px; }
+  .user-row-value { color: #e0a050; font-size: 14px; }
+  .user-row-value.level { color: #d7d7d7; }
+  .user-row-value.time { color: #8a8aa8; font-size: 13px; }
 
-  /* Floating Chat Button */
-  .chat-float {
-    position: fixed; bottom: 24px; right: 20px;
-    width: 54px; height: 54px;
-    background: #5b7bf9;
-    border-radius: 50%; border: none; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 4px 16px rgba(91,123,249,0.4);
-    z-index: 20;
+  .no-more { text-align: center; padding: 20px 0; color: #666; font-size: 13px; }
+
+  /* Date Picker Overlay */
+  .picker-overlay {
+    display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6); z-index: 100;
+    justify-content: center; align-items: flex-end;
   }
-  .chat-float svg { width: 26px; height: 26px; fill: white; }
+  .picker-overlay.active { display: flex; }
+  .picker-box {
+    background: #1e1e3a; width: 100%; max-width: 430px;
+    border-radius: 14px 14px 0 0; padding: 0;
+    animation: slideUp 0.25s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .picker-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 20px; border-bottom: 1px solid #333;
+  }
+  .picker-header button {
+    background: none; border: none; font-size: 16px; cursor: pointer; padding: 4px 8px;
+  }
+  .picker-cancel { color: #888; }
+  .picker-confirm { color: #a08fff; }
+  .picker-wheels {
+    display: flex; height: 200px; overflow: hidden;
+    position: relative;
+  }
+  .picker-wheels::before, .picker-wheels::after {
+    content: ''; position: absolute; left: 0; right: 0;
+    height: 80px; z-index: 2; pointer-events: none;
+  }
+  .picker-wheels::before { top: 0; background: linear-gradient(#1e1e3a, transparent); }
+  .picker-wheels::after { bottom: 0; background: linear-gradient(transparent, #1e1e3a); }
+  .picker-wheel {
+    flex: 1; overflow-y: scroll; text-align: center;
+    scroll-snap-type: y mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .picker-wheel::-webkit-scrollbar { display: none; }
+  .picker-wheel .item {
+    height: 40px; line-height: 40px;
+    scroll-snap-align: center;
+    color: #666; font-size: 16px;
+    transition: color 0.15s;
+  }
+  .picker-wheel .item.selected { color: #fff; font-weight: 500; }
+  .wheel-highlight {
+    position: absolute; top: 50%; left: 0; right: 0;
+    height: 40px; transform: translateY(-50%);
+    border-top: 1px solid #444; border-bottom: 1px solid #444;
+    pointer-events: none; z-index: 1;
+  }
+
+  /* Customer Service Float */
+  .cs-float {
+    position: fixed; bottom: 24px; right: 20px;
+    width: 60px; height: 60px;
+    border-radius: 50%; border: none; cursor: pointer;
+    z-index: 20; background: none; padding: 0;
+    transition: transform 0.2s;
+  }
+  .cs-float:hover { transform: scale(1.1); }
+  .cs-float img {
+    width: 60px; height: 60px; border-radius: 50%;
+    object-fit: cover;
+  }
+  /* Fallback if image not found */
+  .cs-float-fallback {
+    width: 60px; height: 60px; border-radius: 50%;
+    background: #5b7bf9; display: flex; align-items: center; justify-content: center;
+  }
+  .cs-float-fallback svg { width: 28px; height: 28px; fill: #fff; }
+
+  /* Level Picker */
+  .level-overlay {
+    display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4); z-index: 100;
+  }
+  .level-overlay.active { display: flex; justify-content: center; align-items: flex-end; }
+  .level-box {
+    background: #1e1e3a; width: 100%; max-width: 430px;
+    border-radius: 14px 14px 0 0; padding: 10px 0;
+    animation: slideUp 0.25s ease;
+  }
+  .level-option {
+    padding: 14px 20px; color: #d7d7d7; font-size: 15px;
+    cursor: pointer; text-align: center;
+    border-bottom: 1px solid #2a2a4a;
+  }
+  .level-option:hover, .level-option.active { color: #a08fff; }
 </style>
 </head>
 <body>
 
-<!-- Header -->
-<div class="header">
+<!-- Navbar -->
+<div class="navbar">
   <button class="back-btn" onclick="history.back()">‹</button>
   <h1>Subordinate data</h1>
 </div>
@@ -171,44 +250,33 @@
 <!-- Search -->
 <div class="search-bar">
   <input type="text" placeholder="Search subordinate UID" id="searchInput">
-  <button onclick="searchUID()">
+  <button class="search-icon-wrap" onclick="searchUID()">
     <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
   </button>
 </div>
 
 <!-- Filters -->
 <div class="filters">
-  <select class="filter-select" id="levelFilter" onchange="filterData()">
-    <option value="all">All</option>
-    <option value="1">Level 1</option>
-    <option value="2">Level 2</option>
-    <option value="3">Level 3</option>
-    <option value="4">Level 4</option>
-  </select>
-  <select class="filter-select" id="dateFilter" onchange="filterData()">
-    <option value="2026-04-21">2026-04-21</option>
-    <option value="2026-04-20">2026-04-20</option>
-    <option value="2026-04-19">2026-04-19</option>
-    <option value="2026-04-18">2026-04-18</option>
-  </select>
+  <button class="filter-btn" id="levelBtn" onclick="showLevelPicker()">All</button>
+  <button class="filter-btn" id="dateBtn" onclick="showDatePicker()">Select date</button>
 </div>
 
 <!-- Stats Card -->
 <div class="stats-card">
   <div class="stat-item">
-    <div class="stat-number" id="statDepositNum">1</div>
+    <div class="stat-number" id="statDepositNum">0</div>
     <div class="stat-label">Deposit number</div>
   </div>
   <div class="stat-item">
-    <div class="stat-number" id="statDepositAmt">1000</div>
+    <div class="stat-number" id="statDepositAmt">0</div>
     <div class="stat-label">Deposit amount</div>
   </div>
   <div class="stat-item">
-    <div class="stat-number" id="statBettors">3</div>
+    <div class="stat-number" id="statBettors">0</div>
     <div class="stat-label">Number of bettors</div>
   </div>
   <div class="stat-item">
-    <div class="stat-number" id="statTotalBet">2188</div>
+    <div class="stat-number" id="statTotalBet">0</div>
     <div class="stat-label">Total bet</div>
   </div>
   <div class="stat-item">
@@ -221,48 +289,267 @@
   </div>
 </div>
 
+<!-- Loading Spinner -->
+<div class="loading-spinner" id="spinner"></div>
+
 <!-- User Cards -->
 <div class="user-list" id="userList"></div>
 
-<!-- Floating Chat -->
-<button class="chat-float">
-  <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/><path d="M7 9h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2z"/></svg>
+<!-- Customer Service Float -->
+<button class="cs-float" id="csFloat">
+  <img src="icon_sevice.webp" onerror="this.parentElement.innerHTML='<div class=cs-float-fallback><svg viewBox=&quot;0 0 24 24&quot;><path d=&quot;M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z&quot;/><path d=&quot;M7 9h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2z&quot;/></svg></div>'">
 </button>
 
-<script>
-const users = [
-  { uid: "443514", level: 1, deposit: 0, bet: 276, commission: 1.66, time: "2026-04-21" },
-  { uid: "2390004", level: 3, deposit: 1000, bet: 1703, commission: 0.46, time: "2026-04-21" },
-  { uid: "2321318", level: 2, deposit: 0, bet: 209, commission: 0.38, time: "2026-04-21" },
-  { uid: "2324309", level: 4, deposit: 0, bet: 0, commission: 0, time: "2026-04-21" },
-];
+<!-- Date Picker -->
+<div class="picker-overlay" id="pickerOverlay">
+  <div class="picker-box">
+    <div class="picker-header">
+      <button class="picker-cancel" onclick="closeDatePicker()">Cancel</button>
+      <button class="picker-confirm" onclick="confirmDate()">Confirm</button>
+    </div>
+    <div class="picker-wheels">
+      <div class="wheel-highlight"></div>
+      <div class="picker-wheel" id="yearWheel"></div>
+      <div class="picker-wheel" id="monthWheel"></div>
+      <div class="picker-wheel" id="dayWheel"></div>
+    </div>
+  </div>
+</div>
 
-function renderUsers(data) {
+<!-- Level Picker -->
+<div class="level-overlay" id="levelOverlay" onclick="closeLevelPicker()">
+  <div class="level-box" onclick="event.stopPropagation()">
+    <div class="level-option active" onclick="selectLevel('all')">All</div>
+    <div class="level-option" onclick="selectLevel(1)">Level 1</div>
+    <div class="level-option" onclick="selectLevel(2)">Level 2</div>
+    <div class="level-option" onclick="selectLevel(3)">Level 3</div>
+    <div class="level-option" onclick="selectLevel(4)">Level 4</div>
+  </div>
+</div>
+
+<script>
+// Firebase Config
+const firebaseConfig = {
+  apiKey: "AIzaSyDummy",
+  authDomain: "jaiclub-data.firebaseapp.com",
+  databaseURL: "https://jaiclub-data-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "jaiclub-data",
+  storageBucket: "jaiclub-data.appspot.com",
+  messagingSenderId: "000000000",
+  appId: "1:000:web:000"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+let currentDate = '';
+let currentLevel = 'all';
+let allCards = [];
+
+// --- Date Picker ---
+const now = new Date();
+const yesterday = new Date(now);
+yesterday.setDate(yesterday.getDate() - 1);
+
+function initDatePicker() {
+  const yWheel = document.getElementById('yearWheel');
+  const mWheel = document.getElementById('monthWheel');
+  const dWheel = document.getElementById('dayWheel');
+  
+  // Years 2020 to current
+  const currentYear = now.getFullYear();
+  yWheel.innerHTML = '<div class="item" style="height:80px"></div>';
+  for (let y = 2020; y <= currentYear; y++) {
+    yWheel.innerHTML += `<div class="item" data-val="${y}">${y}</div>`;
+  }
+  yWheel.innerHTML += '<div class="item" style="height:80px"></div>';
+  
+  // Months
+  mWheel.innerHTML = '<div class="item" style="height:80px"></div>';
+  for (let m = 1; m <= 12; m++) {
+    mWheel.innerHTML += `<div class="item" data-val="${m}">${String(m).padStart(2,'0')}</div>`;
+  }
+  mWheel.innerHTML += '<div class="item" style="height:80px"></div>';
+  
+  buildDays(yesterday.getFullYear(), yesterday.getMonth() + 1);
+  
+  // Scroll to yesterday
+  setTimeout(() => {
+    scrollToValue(yWheel, yesterday.getFullYear());
+    scrollToValue(mWheel, yesterday.getMonth() + 1);
+    scrollToValue(dWheel, yesterday.getDate());
+  }, 100);
+  
+  // Scroll listeners
+  [yWheel, mWheel, dWheel].forEach(w => {
+    w.addEventListener('scroll', () => { updateSelected(w); });
+  });
+}
+
+function buildDays(year, month) {
+  const dWheel = document.getElementById('dayWheel');
+  const maxDay = new Date(year, month, 0).getDate();
+  // Cap if this is current year & month — max is yesterday
+  let capDay = maxDay;
+  if (year === now.getFullYear() && month === now.getMonth() + 1) {
+    capDay = Math.min(maxDay, yesterday.getDate());
+  }
+  dWheel.innerHTML = '<div class="item" style="height:80px"></div>';
+  for (let d = 1; d <= capDay; d++) {
+    dWheel.innerHTML += `<div class="item" data-val="${d}">${String(d).padStart(2,'0')}</div>`;
+  }
+  dWheel.innerHTML += '<div class="item" style="height:80px"></div>';
+}
+
+function scrollToValue(wheel, val) {
+  const items = wheel.querySelectorAll('.item[data-val]');
+  for (const item of items) {
+    if (parseInt(item.dataset.val) === val) {
+      wheel.scrollTop = item.offsetTop - 80;
+      break;
+    }
+  }
+  updateSelected(wheel);
+}
+
+function updateSelected(wheel) {
+  const items = wheel.querySelectorAll('.item[data-val]');
+  const center = wheel.scrollTop + 100;
+  items.forEach(item => {
+    const itemCenter = item.offsetTop + 20;
+    if (Math.abs(itemCenter - center) < 20) {
+      item.classList.add('selected');
+    } else {
+      item.classList.remove('selected');
+    }
+  });
+}
+
+function getWheelValue(wheel) {
+  const selected = wheel.querySelector('.item.selected');
+  return selected ? parseInt(selected.dataset.val) : null;
+}
+
+function showDatePicker() {
+  document.getElementById('pickerOverlay').classList.add('active');
+}
+function closeDatePicker() {
+  document.getElementById('pickerOverlay').classList.remove('active');
+}
+function confirmDate() {
+  const y = getWheelValue(document.getElementById('yearWheel'));
+  const m = getWheelValue(document.getElementById('monthWheel'));
+  const d = getWheelValue(document.getElementById('dayWheel'));
+  if (y && m && d) {
+    // Validate not future
+    const picked = new Date(y, m - 1, d);
+    if (picked >= new Date(now.getFullYear(), now.getMonth(), now.getDate())) {
+      return; // can't pick today or future
+    }
+    currentDate = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    document.getElementById('dateBtn').textContent = currentDate;
+    closeDatePicker();
+    loadData();
+  }
+}
+
+// --- Level Picker ---
+function showLevelPicker() { document.getElementById('levelOverlay').classList.add('active'); }
+function closeLevelPicker() { document.getElementById('levelOverlay').classList.remove('active'); }
+function selectLevel(lvl) {
+  currentLevel = lvl;
+  const btn = document.getElementById('levelBtn');
+  btn.textContent = lvl === 'all' ? 'All' : `Level ${lvl}`;
+  // Update active state
+  document.querySelectorAll('.level-option').forEach(o => o.classList.remove('active'));
+  event.target.classList.add('active');
+  closeLevelPicker();
+  renderCards();
+}
+
+// --- Firebase Data ---
+function loadData() {
+  if (!currentDate) return;
+  
+  // Reset stats to 0 instantly
+  ['statDepositNum','statDepositAmt','statBettors','statTotalBet','statFirstDepPpl','statFirstDepAmt'].forEach(id => {
+    document.getElementById(id).textContent = '0';
+  });
+  document.getElementById('userList').innerHTML = '';
+  
+  // Show spinner
+  const spinner = document.getElementById('spinner');
+  spinner.classList.add('active');
+  
+  const ref = db.ref(`dates/${currentDate}`);
+  ref.once('value').then(snap => {
+    spinner.classList.remove('active');
+    const data = snap.val();
+    if (!data) {
+      renderCards();
+      return;
+    }
+    
+    // Stats
+    if (data.stats) {
+      const s = data.stats;
+      document.getElementById('statDepositNum').textContent = s.depositNum || 0;
+      document.getElementById('statDepositAmt').textContent = s.depositAmt || 0;
+      document.getElementById('statBettors').textContent = s.bettors || 0;
+      document.getElementById('statTotalBet').textContent = s.totalBet || 0;
+      document.getElementById('statFirstDepPpl').textContent = s.firstPpl || 0;
+      document.getElementById('statFirstDepAmt').textContent = s.firstAmt || 0;
+    }
+    
+    // Cards
+    allCards = [];
+    if (data.cards) {
+      Object.values(data.cards).forEach(c => {
+        allCards.push({
+          uid: c.uid || '',
+          level: c.level || 0,
+          deposit: c.deposit || 0,
+          commission: c.commission || 0,
+          time: currentDate
+        });
+      });
+    }
+    renderCards();
+  }).catch(() => {
+    spinner.classList.remove('active');
+  });
+}
+
+function renderCards() {
   const list = document.getElementById('userList');
-  if (data.length === 0) {
-    list.innerHTML = '<div style="text-align:center;padding:40px;color:#bbb"><p>No data</p></div>';
+  let cards = [...allCards];
+  if (currentLevel !== 'all') {
+    cards = cards.filter(c => c.level == currentLevel);
+  }
+  
+  if (cards.length === 0) {
+    list.innerHTML = '<div class="no-more">No data</div>';
     return;
   }
-  list.innerHTML = data.map(u => `
+  
+  list.innerHTML = cards.map(u => `
     <div class="user-card">
       <div class="user-card-header">
         <span class="uid">UID:${u.uid}</span>
         <button class="copy-btn" onclick="copyUID('${u.uid}')">
-          <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="14" y="6" width="24" height="30" rx="4" stroke="#fff" stroke-width="3" fill="none"/>
+            <rect x="8" y="12" width="24" height="30" rx="4" stroke="#fff" stroke-width="3" fill="none"/>
+          </svg>
         </button>
       </div>
       <div class="user-rows">
         <div class="user-row">
           <span class="user-row-label">Level</span>
-          <span class="user-row-value neutral">${u.level}</span>
+          <span class="user-row-value level">${u.level}</span>
         </div>
         <div class="user-row">
           <span class="user-row-label">Deposit amount</span>
           <span class="user-row-value">${u.deposit}</span>
-        </div>
-        <div class="user-row">
-          <span class="user-row-label">Bet amount</span>
-          <span class="user-row-value">${u.bet}</span>
         </div>
         <div class="user-row">
           <span class="user-row-label">Commission</span>
@@ -274,34 +561,38 @@ function renderUsers(data) {
         </div>
       </div>
     </div>
-  `).join('');
-}
-
-function filterData() {
-  const level = document.getElementById('levelFilter').value;
-  const date = document.getElementById('dateFilter').value;
-  let filtered = users.filter(u => u.time === date);
-  if (level !== 'all') filtered = filtered.filter(u => u.level == level);
-  renderUsers(filtered);
+  `).join('') + '<div class="no-more">No more</div>';
 }
 
 function searchUID() {
   const q = document.getElementById('searchInput').value.trim();
-  if (!q) { filterData(); return; }
-  const found = users.filter(u => u.uid.includes(q));
-  renderUsers(found);
+  if (!q) { renderCards(); return; }
+  const list = document.getElementById('userList');
+  const filtered = allCards.filter(c => c.uid.includes(q));
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="no-more">No data</div>';
+    return;
+  }
+  allCards = filtered;
+  renderCards();
+  allCards = [...filtered]; // restore after render
 }
 
 function copyUID(uid) {
   navigator.clipboard.writeText(uid).catch(() => {});
-  alert('UID copied: ' + uid);
 }
 
 document.getElementById('searchInput').addEventListener('keyup', e => {
   if (e.key === 'Enter') searchUID();
 });
 
-renderUsers(users);
+// Init
+initDatePicker();
+
+// Auto-select yesterday
+currentDate = `${yesterday.getFullYear()}-${String(yesterday.getMonth()+1).padStart(2,'0')}-${String(yesterday.getDate()).padStart(2,'0')}`;
+document.getElementById('dateBtn').textContent = currentDate;
+loadData();
 </script>
 </body>
 </html>
