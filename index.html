@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Subordinate data</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, Roboto, 'PingFang SC', miui, 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
+    background: #1a1a2c;
+    color: #d7d7d7;
+    min-height: 100vh;
+    max-width: 400px;
+    margin: 0 auto;
+    -webkit-font-smoothing: antialiased;
+    padding: 0 12.8px;
+  }
+
+  /* Header / Navbar */
+  .header {
+    display: flex;
+    align-items: center;
+    padding: 14px 0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #1a1a2c;
+  }
+  .header .back-btn {
+    background: none; border: none; color: #fff;
+    font-size: 24px; cursor: pointer; padding: 4px 8px;
+    line-height: 1;
+  }
+  .header h1 {
+    flex: 1; text-align: center; font-size: 19.2px;
+    font-weight: 400; color: #fff; margin-right: 32px;
+  }
+
+  /* Search Bar */
+  .search-bar {
+    margin: 0 0 12px;
+    display: flex;
+    background: #22224b;
+    border-radius: 8px;
+    overflow: hidden;
+    border: none;
+    height: 53px;
+    align-items: center;
+  }
+  .search-bar input {
+    flex: 1; padding: 0 14px;
+    background: transparent; border: none;
+    color: #fff; font-size: 14.93px; outline: none;
+  }
+  .search-bar input::placeholder { color: rgba(255,255,255,0.4); }
+  .search-bar button {
+    background: rgba(160,143,255,0.3); border: none; padding: 0;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    width: 44px; height: 36px; border-radius: 8px; margin-right: 8px;
+  }
+  .search-bar button svg { width: 20px; height: 20px; fill: #a08fff; }
+
+  /* Filters */
+  .filters {
+    display: flex; gap: 12px;
+    margin: 0 0 16px;
+  }
+  .filter-select {
+    flex: 1; padding: 11px 14px;
+    background: #22224b; border: none;
+    border-radius: 8px; color: #fff;
+    font-size: 14px; cursor: pointer;
+    appearance: none; -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='%23888'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 32px;
+  }
+  .filter-select option { background: #22224b; color: #fff; }
+
+  /* Stats Card */
+  .stats-card {
+    margin: 0 0 16px;
+    background: #a08fff;
+    border-radius: 10.67px;
+    padding: 21.33px 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    overflow: hidden;
+  }
+  .stat-item {
+    padding: 10px 12px;
+    text-align: center;
+    position: relative;
+  }
+  /* Vertical divider */
+  .stat-item:nth-child(odd) {
+    border-right: 1px solid rgba(0,0,0,0.15);
+  }
+  /* Horizontal dividers */
+  .stat-item:nth-child(1), .stat-item:nth-child(2) {
+    border-bottom: 1px solid rgba(0,0,0,0.15);
+  }
+  .stat-item:nth-child(3), .stat-item:nth-child(4) {
+    border-bottom: 1px solid rgba(0,0,0,0.15);
+  }
+  .stat-number {
+    font-size: 22px; font-weight: 700; color: #fff;
+    line-height: 1.2;
+  }
+  .stat-label {
+    font-size: 12.8px; color: rgba(255,255,255,0.85);
+    margin-top: 4px; line-height: 1.3;
+  }
+
+  /* User Cards */
+  .user-list { padding: 0 0 100px; }
+  .user-card {
+    background: #22224b;
+    border-radius: 5.33px;
+    margin-bottom: 14px;
+    padding: 0 10.67px;
+    overflow: hidden;
+  }
+  .user-card-header {
+    display: flex; align-items: center;
+    padding: 5.33px 0 0;
+    border-bottom: 1px solid #4c4380;
+    height: 37.33px;
+  }
+  .uid {
+    font-size: 17.07px; font-weight: 400; color: #fff;
+  }
+  .copy-btn {
+    background: none; border: none; cursor: pointer;
+    margin-left: 12px; color: #fff; font-size: 18px;
+    display: flex; align-items: center;
+  }
+  .copy-btn svg { width: 18px; height: 18px; fill: #fff; }
+  .user-rows { padding: 11.73px 0; }
+  .user-row {
+    display: flex; justify-content: space-between; align-items: center;
+    height: 16px;
+  }
+  .user-row + .user-row {
+    margin-top: 11.73px;
+  }
+  .user-row-label { color: #d7d7d7; font-size: 13.87px; font-weight: 400; }
+  .user-row-value { color: #feaa57; font-size: 13.87px; font-weight: 400; }
+  .user-row-value.neutral { color: #d7d7d7; }
+  .user-row-value.time { color: #93939d; font-size: 12.8px; font-weight: 400; }
+
+  /* No more text */
+  .no-more {
+    text-align: center; padding: 20px 0; color: #d7d7d7; font-size: 13px;
+  }
+
+  /* Floating Chat Button */
+  .chat-float {
+    position: fixed; bottom: 24px; right: 20px;
+    width: 54px; height: 54px;
+    background: none;
+    border-radius: 50%; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 20;
+  }
+  .chat-float img { width: 54px; height: 54px; border-radius: 50%; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <button class="back-btn" onclick="history.back()">‹</button>
+  <h1>Subordinate data</h1>
+</div>
+
+<!-- Search -->
+<div class="search-bar">
+  <input type="text" placeholder="Search subordinate UID" id="searchInput">
+  <button onclick="searchUID()">
+    <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+  </button>
+</div>
+
+<!-- Filters -->
+<div class="filters">
+  <select class="filter-select" id="levelFilter" onchange="filterData()">
+    <option value="all">All</option>
+    <option value="1">Level 1</option>
+    <option value="2">Level 2</option>
+    <option value="3">Level 3</option>
+    <option value="4">Level 4</option>
+  </select>
+  <select class="filter-select" id="dateFilter" onchange="filterData()">
+    <option value="2026-04-21">2026-04-21</option>
+    <option value="2026-04-20">2026-04-20</option>
+    <option value="2026-04-19">2026-04-19</option>
+    <option value="2026-04-18">2026-04-18</option>
+  </select>
+</div>
+
+<!-- Stats Card -->
+<div class="stats-card">
+  <div class="stat-item">
+    <div class="stat-number" id="statDepositNum">1</div>
+    <div class="stat-label">Deposit number</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number" id="statDepositAmt">1000</div>
+    <div class="stat-label">Deposit amount</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number" id="statBettors">3</div>
+    <div class="stat-label">Number of bettors</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number" id="statTotalBet">2188</div>
+    <div class="stat-label">Total bet</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number" id="statFirstDepPpl">0</div>
+    <div class="stat-label">Number of people making first deposit</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number" id="statFirstDepAmt">0</div>
+    <div class="stat-label">First deposit amount</div>
+  </div>
+</div>
+
+<!-- User Cards -->
+<div class="user-list" id="userList"></div>
+
+<!-- Floating Chat -->
+<button class="chat-float">
+  <svg viewBox="0 0 24 24" width="40" height="40"><circle cx="12" cy="12" r="12" fill="#5b7bf9"/><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z" fill="white" transform="scale(0.5) translate(12,12)"/></svg>
+</button>
+
+<script>
+const users = [
+  { uid: "443514", level: 1, deposit: 0, bet: 276, commission: 1.66, time: "2026-04-21" },
+  { uid: "2390004", level: 3, deposit: 1000, bet: 1703, commission: 0.46, time: "2026-04-21" },
+  { uid: "2321318", level: 2, deposit: 0, bet: 209, commission: 0.38, time: "2026-04-21" },
+  { uid: "2324309", level: 4, deposit: 0, bet: 0, commission: 0, time: "2026-04-21" },
+];
+
+function renderUsers(data) {
+  const list = document.getElementById('userList');
+  if (data.length === 0) {
+    list.innerHTML = '<div class="no-more">No data</div>';
+    return;
+  }
+  list.innerHTML = data.map(u => `
+    <div class="user-card">
+      <div class="user-card-header">
+        <span class="uid">UID:${u.uid}</span>
+        <button class="copy-btn" onclick="copyUID('${u.uid}')">
+          <svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="3"><rect x="14" y="6" width="24" height="30" rx="4"/><rect x="8" y="12" width="24" height="30" rx="4"/></svg>
+        </button>
+      </div>
+      <div class="user-rows">
+        <div class="user-row">
+          <span class="user-row-label">Level</span>
+          <span class="user-row-value neutral">${u.level}</span>
+        </div>
+        <div class="user-row">
+          <span class="user-row-label">Deposit amount</span>
+          <span class="user-row-value">${u.deposit}</span>
+        </div>
+        <div class="user-row">
+          <span class="user-row-label">Commission</span>
+          <span class="user-row-value">${u.commission}</span>
+        </div>
+        <div class="user-row">
+          <span class="user-row-label">Time</span>
+          <span class="user-row-value time">${u.time}</span>
+        </div>
+      </div>
+    </div>
+  `).join('') + '<div class="no-more">No more</div>';
+}
+
+function filterData() {
+  const level = document.getElementById('levelFilter').value;
+  const date = document.getElementById('dateFilter').value;
+  let filtered = users.filter(u => u.time === date);
+  if (level !== 'all') filtered = filtered.filter(u => u.level == level);
+  renderUsers(filtered);
+}
+
+function searchUID() {
+  const q = document.getElementById('searchInput').value.trim();
+  if (!q) { filterData(); return; }
+  const found = users.filter(u => u.uid.includes(q));
+  renderUsers(found);
+}
+
+function copyUID(uid) {
+  navigator.clipboard.writeText(uid).catch(() => {});
+}
+
+document.getElementById('searchInput').addEventListener('keyup', e => {
+  if (e.key === 'Enter') searchUID();
+});
+
+renderUsers(users);
+</script>
+</body>
+</html>
