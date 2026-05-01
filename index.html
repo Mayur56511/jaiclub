@@ -7,166 +7,157 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, Roboto, 'PingFang SC', miui, 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
-    background: #1a1a2c;
-    color: #d7d7d7;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    background: #f5f6fa;
+    color: #333;
     min-height: 100vh;
-    max-width: 400px;
+    max-width: 480px;
     margin: 0 auto;
     -webkit-font-smoothing: antialiased;
-    padding: 0 12.8px;
   }
 
-  /* Header / Navbar */
+  /* Header */
   .header {
     display: flex;
     align-items: center;
-    padding: 14px 0;
+    padding: 14px 16px;
+    background: #fff;
+    border-bottom: 1px solid #eee;
     position: sticky;
     top: 0;
     z-index: 10;
-    background: #1a1a2c;
   }
   .header .back-btn {
-    background: none; border: none; color: #fff;
+    background: none; border: none; color: #333;
     font-size: 24px; cursor: pointer; padding: 4px 8px;
     line-height: 1;
   }
   .header h1 {
-    flex: 1; text-align: center; font-size: 19.2px;
-    font-weight: 400; color: #fff; margin-right: 32px;
+    flex: 1; text-align: center; font-size: 17px;
+    font-weight: 600; color: #222; margin-right: 32px;
   }
 
   /* Search Bar */
   .search-bar {
-    margin: 0 0 12px;
+    margin: 16px 16px 12px;
     display: flex;
-    background: #22224b;
+    background: #fff;
     border-radius: 8px;
     overflow: hidden;
-    border: none;
-    height: 53px;
-    align-items: center;
+    border: 1px solid #e0e0e0;
+    height: 44px;
   }
   .search-bar input {
     flex: 1; padding: 0 14px;
     background: transparent; border: none;
-    color: #fff; font-size: 14.93px; outline: none;
+    color: #333; font-size: 14px; outline: none;
   }
-  .search-bar input::placeholder { color: rgba(255,255,255,0.4); }
+  .search-bar input::placeholder { color: #b0b0b0; }
   .search-bar button {
-    background: rgba(160,143,255,0.3); border: none; padding: 0;
+    background: #4a6cf7; border: none; padding: 0 20px;
     cursor: pointer; display: flex; align-items: center; justify-content: center;
-    width: 44px; height: 36px; border-radius: 8px; margin-right: 8px;
+    min-width: 52px;
   }
-  .search-bar button svg { width: 20px; height: 20px; fill: #a08fff; }
+  .search-bar button svg { width: 20px; height: 20px; fill: white; }
 
   /* Filters */
   .filters {
     display: flex; gap: 12px;
-    margin: 0 0 16px;
+    margin: 0 16px 16px;
   }
   .filter-select {
     flex: 1; padding: 11px 14px;
-    background: #22224b; border: none;
-    border-radius: 8px; color: #fff;
+    background: #fff; border: 1px solid #e0e0e0;
+    border-radius: 8px; color: #333;
     font-size: 14px; cursor: pointer;
     appearance: none; -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='%23888'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='%23999'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 12px center;
     background-size: 16px;
     padding-right: 32px;
   }
-  .filter-select option { background: #22224b; color: #fff; }
+  .filter-select option { background: #fff; color: #333; }
 
   /* Stats Card */
   .stats-card {
-    margin: 0 0 16px;
-    background: #a08fff;
-    border-radius: 10.67px;
-    padding: 21.33px 0;
+    margin: 0 16px 20px;
+    background: linear-gradient(135deg, #5b7bf9, #4a8af7);
+    border-radius: 14px;
+    padding: 0;
     display: grid;
     grid-template-columns: 1fr 1fr;
     overflow: hidden;
   }
   .stat-item {
-    padding: 10px 12px;
+    padding: 18px 12px;
     text-align: center;
     position: relative;
   }
-  /* Vertical divider */
+  /* Vertical dividers */
   .stat-item:nth-child(odd) {
-    border-right: 1px solid rgba(0,0,0,0.15);
+    border-right: 1px solid rgba(255,255,255,0.25);
   }
   /* Horizontal dividers */
   .stat-item:nth-child(1), .stat-item:nth-child(2) {
-    border-bottom: 1px solid rgba(0,0,0,0.15);
+    border-bottom: 1px solid rgba(255,255,255,0.25);
   }
   .stat-item:nth-child(3), .stat-item:nth-child(4) {
-    border-bottom: 1px solid rgba(0,0,0,0.15);
+    border-bottom: 1px solid rgba(255,255,255,0.25);
   }
   .stat-number {
-    font-size: 22px; font-weight: 700; color: #fff;
+    font-size: 26px; font-weight: 700; color: #fff;
     line-height: 1.2;
   }
   .stat-label {
-    font-size: 12.8px; color: rgba(255,255,255,0.85);
+    font-size: 12px; color: rgba(255,255,255,0.85);
     margin-top: 4px; line-height: 1.3;
   }
 
   /* User Cards */
-  .user-list { padding: 0 0 100px; }
+  .user-list { padding: 0 16px 100px; }
   .user-card {
-    background: #22224b;
-    border-radius: 5.33px;
+    background: #fff;
+    border-radius: 12px;
     margin-bottom: 14px;
-    padding: 0 10.67px;
+    border: 1px solid #e8e8e8;
     overflow: hidden;
   }
   .user-card-header {
     display: flex; align-items: center;
-    padding: 5.33px 0 0;
-    border-bottom: 1px solid #4c4380;
-    height: 37.33px;
+    padding: 14px 16px;
+    border-bottom: 1px solid #f0f0f0;
   }
   .uid {
-    font-size: 17.07px; font-weight: 400; color: #fff;
+    font-size: 16px; font-weight: 600; color: #222;
   }
   .copy-btn {
     background: none; border: none; cursor: pointer;
-    margin-left: 12px; color: #fff; font-size: 18px;
+    margin-left: 12px; color: #999; font-size: 18px;
     display: flex; align-items: center;
   }
-  .copy-btn svg { width: 18px; height: 18px; fill: #fff; }
-  .user-rows { padding: 11.73px 0; }
+  .copy-btn svg { width: 18px; height: 18px; fill: #999; }
+  .user-rows { padding: 4px 0; }
   .user-row {
-    display: flex; justify-content: space-between; align-items: center;
-    height: 16px;
+    display: flex; justify-content: space-between;
+    padding: 10px 16px;
   }
-  .user-row + .user-row {
-    margin-top: 11.73px;
-  }
-  .user-row-label { color: #d7d7d7; font-size: 13.87px; font-weight: 400; }
-  .user-row-value { color: #feaa57; font-size: 13.87px; font-weight: 400; }
-  .user-row-value.neutral { color: #d7d7d7; }
-  .user-row-value.time { color: #93939d; font-size: 12.8px; font-weight: 400; }
-
-  /* No more text */
-  .no-more {
-    text-align: center; padding: 20px 0; color: #d7d7d7; font-size: 13px;
-  }
+  .user-row-label { color: #888; font-size: 14px; }
+  .user-row-value { color: #e8a040; font-size: 14px; font-weight: 500; }
+  .user-row-value.neutral { color: #555; }
+  .user-row-value.time { color: #bbb; font-weight: 400; }
 
   /* Floating Chat Button */
   .chat-float {
     position: fixed; bottom: 24px; right: 20px;
     width: 54px; height: 54px;
-    background: none;
+    background: #5b7bf9;
     border-radius: 50%; border: none; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 16px rgba(91,123,249,0.4);
     z-index: 20;
   }
-  .chat-float img { width: 54px; height: 54px; border-radius: 50%; }
+  .chat-float svg { width: 26px; height: 26px; fill: white; }
 </style>
 </head>
 <body>
@@ -235,7 +226,7 @@
 
 <!-- Floating Chat -->
 <button class="chat-float">
-  <svg viewBox="0 0 24 24" width="40" height="40"><circle cx="12" cy="12" r="12" fill="#5b7bf9"/><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z" fill="white" transform="scale(0.5) translate(12,12)"/></svg>
+  <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/><path d="M7 9h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2z"/></svg>
 </button>
 
 <script>
@@ -249,7 +240,7 @@ const users = [
 function renderUsers(data) {
   const list = document.getElementById('userList');
   if (data.length === 0) {
-    list.innerHTML = '<div class="no-more">No data</div>';
+    list.innerHTML = '<div style="text-align:center;padding:40px;color:#bbb"><p>No data</p></div>';
     return;
   }
   list.innerHTML = data.map(u => `
@@ -257,7 +248,7 @@ function renderUsers(data) {
       <div class="user-card-header">
         <span class="uid">UID:${u.uid}</span>
         <button class="copy-btn" onclick="copyUID('${u.uid}')">
-          <svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="3"><rect x="14" y="6" width="24" height="30" rx="4"/><rect x="8" y="12" width="24" height="30" rx="4"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
         </button>
       </div>
       <div class="user-rows">
@@ -270,6 +261,10 @@ function renderUsers(data) {
           <span class="user-row-value">${u.deposit}</span>
         </div>
         <div class="user-row">
+          <span class="user-row-label">Bet amount</span>
+          <span class="user-row-value">${u.bet}</span>
+        </div>
+        <div class="user-row">
           <span class="user-row-label">Commission</span>
           <span class="user-row-value">${u.commission}</span>
         </div>
@@ -279,7 +274,7 @@ function renderUsers(data) {
         </div>
       </div>
     </div>
-  `).join('') + '<div class="no-more">No more</div>';
+  `).join('');
 }
 
 function filterData() {
@@ -299,6 +294,7 @@ function searchUID() {
 
 function copyUID(uid) {
   navigator.clipboard.writeText(uid).catch(() => {});
+  alert('UID copied: ' + uid);
 }
 
 document.getElementById('searchInput').addEventListener('keyup', e => {
