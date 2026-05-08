@@ -1,261 +1,514 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Panel - Jaiclub</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<title>Admin Panel – Cup Game</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #0f0f1e;
-    color: #d7d7d7;
-    min-height: 100vh;
-    max-width: 500px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-  h1 { color: #a08fff; text-align: center; margin-bottom: 20px; font-size: 22px; }
-  
-  /* Login */
-  .login-box { max-width: 300px; margin: 80px auto; text-align: center; }
-  .login-box input {
-    width: 100%; padding: 12px; margin: 10px 0;
-    background: #1e1e3a; border: 1px solid #3e3e60; border-radius: 8px;
-    color: #fff; font-size: 16px; outline: none;
-  }
-  .login-box button {
-    width: 100%; padding: 12px; margin-top: 10px;
-    background: #a08fff; border: none; border-radius: 8px;
-    color: #fff; font-size: 16px; cursor: pointer; font-weight: 600;
-  }
-  .login-box button:hover { background: #8a7ae0; }
-  .error { color: #ff6b6b; font-size: 13px; margin-top: 8px; }
-  
-  /* Panel */
-  .panel { display: none; }
-  .panel.active { display: block; }
-  
-  .section {
-    background: #1e1e3a; border-radius: 10px;
-    padding: 16px; margin-bottom: 16px;
-    border: 1px solid #2e2e50;
-  }
-  .section h2 { font-size: 16px; color: #a08fff; margin-bottom: 12px; }
-  
-  label { display: block; font-size: 13px; color: #888; margin: 8px 0 4px; }
-  input, select {
-    width: 100%; padding: 10px;
-    background: #0f0f1e; border: 1px solid #3e3e60; border-radius: 6px;
-    color: #fff; font-size: 14px; outline: none;
-  }
-  
-  .btn {
-    padding: 10px 20px; border: none; border-radius: 8px;
-    cursor: pointer; font-size: 14px; font-weight: 600;
-    margin: 4px;
-  }
-  .btn-primary { background: #a08fff; color: #fff; }
-  .btn-primary:hover { background: #8a7ae0; }
-  .btn-danger { background: #ff4757; color: #fff; }
-  .btn-success { background: #2ed573; color: #fff; }
-  
-  .btn-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-  
-  .card-entry {
-    background: #0f0f1e; border: 1px solid #3e3e60; border-radius: 8px;
-    padding: 12px; margin-bottom: 8px;
-  }
-  .card-entry .card-header {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 8px;
-  }
-  .card-entry .card-header span { color: #a08fff; font-weight: 600; }
-  .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  
-  .status-msg {
-    padding: 10px; border-radius: 6px; text-align: center;
-    margin: 10px 0; font-size: 14px; display: none;
-  }
-  .status-msg.show { display: block; }
-  .status-msg.success { background: rgba(46,213,115,0.2); color: #2ed573; }
-  .status-msg.error { background: rgba(255,71,87,0.2); color: #ff4757; }
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Poppins',sans-serif;background:#0a0a0a;min-height:100vh;color:#fff;overflow-x:hidden;}
+
+/* ── Login Screen ── */
+#loginScreen{
+  position:fixed;inset:0;z-index:999;
+  background:linear-gradient(135deg,#0a0a0a 0%,#1a0a00 100%);
+  display:flex;align-items:center;justify-content:center;
+}
+.login-box{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,149,0,.2);
+  border-radius:28px;
+  padding:40px 32px;
+  width:88%;max-width:380px;
+  text-align:center;
+  box-shadow:0 0 60px rgba(255,149,0,.08);
+}
+.login-box .logo{font-size:52px;margin-bottom:8px;}
+.login-box h1{font-size:22px;font-weight:800;background:linear-gradient(135deg,#ff9500,#ff5500);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px;}
+.login-box p{font-size:13px;color:rgba(255,255,255,.35);margin-bottom:28px;}
+.login-input{
+  width:100%;padding:14px 16px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:14px;
+  color:#fff;
+  font-family:'Poppins',sans-serif;
+  font-size:15px;
+  margin-bottom:16px;
+  outline:none;
+  transition:border .2s;
+}
+.login-input:focus{border-color:rgba(255,149,0,.5);}
+.login-btn{
+  width:100%;padding:14px;border:none;border-radius:14px;
+  background:linear-gradient(135deg,#ff9500,#ff5500);
+  color:#fff;font-family:'Poppins',sans-serif;
+  font-size:15px;font-weight:800;cursor:pointer;
+  transition:opacity .2s;
+}
+.login-btn:hover{opacity:.85;}
+.login-err{color:#ff4444;font-size:13px;margin-top:10px;display:none;}
+
+/* ── Dashboard ── */
+#dashboard{display:none;padding-bottom:40px;}
+
+.topbar{
+  background:rgba(0,0,0,.8);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,149,0,.15);
+  padding:16px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+}
+.topbar .brand{
+  display:flex;align-items:center;gap:10px;
+  font-size:16px;font-weight:800;
+  background:linear-gradient(135deg,#ff9500,#ff5500);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.topbar .brand span{font-size:24px;-webkit-text-fill-color:initial;}
+.logout-btn{
+  padding:8px 16px;border:none;border-radius:10px;
+  background:rgba(255,255,255,.08);
+  color:rgba(255,255,255,.6);
+  font-family:'Poppins',sans-serif;font-size:12px;font-weight:700;
+  cursor:pointer;transition:background .2s;
+}
+.logout-btn:hover{background:rgba(255,255,255,.14);}
+
+.content{padding:20px 16px;max-width:900px;margin:0 auto;}
+
+/* ── Section Header ── */
+.section-title{
+  font-size:16px;font-weight:800;
+  color:rgba(255,255,255,.85);
+  margin:28px 0 14px;
+  display:flex;align-items:center;gap:8px;
+}
+.section-title::after{
+  content:'';flex:1;height:1px;
+  background:linear-gradient(90deg,rgba(255,149,0,.3),transparent);
+}
+
+/* ── Stats Grid ── */
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+@media(min-width:600px){.stats-grid{grid-template-columns:repeat(3,1fr);}}
+@media(min-width:800px){.stats-grid{grid-template-columns:repeat(5,1fr);}}
+
+.stat-card{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:18px;padding:18px 16px;
+  text-align:center;
+  transition:border-color .2s;
+}
+.stat-card:hover{border-color:rgba(255,149,0,.3);}
+.stat-icon{font-size:28px;margin-bottom:6px;}
+.stat-val{
+  font-size:22px;font-weight:900;
+  background:linear-gradient(135deg,#ff9500,#ffcc00);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.stat-lbl{font-size:11px;color:rgba(255,255,255,.35);margin-top:2px;font-weight:600;}
+
+/* ── Channel Manager ── */
+.channel-sets{display:flex;flex-direction:column;gap:20px;}
+
+.ch-set{
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:20px;padding:20px;
+}
+.ch-set-title{
+  font-size:14px;font-weight:800;
+  color:rgba(255,149,0,.9);
+  margin-bottom:14px;
+  display:flex;align-items:center;gap:6px;
+}
+
+.ch-row{
+  display:grid;
+  grid-template-columns:60px 1fr 1fr 1fr;
+  gap:8px;
+  margin-bottom:10px;
+  align-items:center;
+}
+@media(max-width:500px){
+  .ch-row{grid-template-columns:50px 1fr 1fr;grid-template-rows:auto auto;}
+  .ch-row .ch-url{grid-column:1/-1;}
+}
+
+.ch-input{
+  width:100%;padding:10px 12px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:10px;
+  color:#fff;font-family:'Poppins',sans-serif;font-size:12px;
+  outline:none;transition:border .2s;
+}
+.ch-input:focus{border-color:rgba(255,149,0,.5);}
+.ch-input::placeholder{color:rgba(255,255,255,.2);}
+
+.ch-input-icon{text-align:center;font-size:18px;}
+
+.save-btn{
+  width:100%;padding:14px;border:none;border-radius:14px;
+  background:linear-gradient(135deg,#ff9500,#ff5500);
+  color:#fff;font-family:'Poppins',sans-serif;
+  font-size:14px;font-weight:800;cursor:pointer;
+  margin-top:16px;transition:opacity .2s;
+}
+.save-btn:hover{opacity:.85;}
+.save-toast{
+  display:inline-block;
+  padding:8px 18px;border-radius:30px;
+  background:rgba(0,200,80,.15);border:1px solid rgba(0,200,80,.3);
+  color:#00c850;font-size:12px;font-weight:700;
+  margin-top:10px;opacity:0;transition:opacity .3s;
+}
+
+/* ── Withdrawals Table ── */
+.wd-table-wrap{
+  overflow-x:auto;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.08);
+}
+.wd-table{
+  width:100%;border-collapse:collapse;
+  font-size:13px;
+}
+.wd-table th{
+  background:rgba(255,149,0,.1);
+  padding:12px 14px;text-align:left;
+  font-weight:700;font-size:11px;
+  color:rgba(255,149,0,.8);
+  text-transform:uppercase;letter-spacing:.5px;
+  white-space:nowrap;
+}
+.wd-table td{
+  padding:12px 14px;
+  border-top:1px solid rgba(255,255,255,.05);
+  color:rgba(255,255,255,.75);
+  white-space:nowrap;
+}
+.wd-table tr:hover td{background:rgba(255,255,255,.03);}
+.wd-badge{
+  display:inline-block;padding:3px 10px;border-radius:20px;
+  font-size:11px;font-weight:700;
+  background:rgba(255,149,0,.15);
+  color:#ff9500;border:1px solid rgba(255,149,0,.25);
+}
+.no-data{
+  text-align:center;padding:40px;
+  color:rgba(255,255,255,.2);font-size:14px;
+}
+
+/* ── Refresh ── */
+.refresh-row{
+  display:flex;align-items:center;justify-content:flex-end;gap:10px;
+  margin-bottom:8px;
+}
+.refresh-btn{
+  padding:7px 14px;border:1px solid rgba(255,149,0,.3);
+  border-radius:10px;background:transparent;
+  color:rgba(255,149,0,.8);font-family:'Poppins',sans-serif;
+  font-size:12px;font-weight:700;cursor:pointer;
+  transition:background .2s;
+}
+.refresh-btn:hover{background:rgba(255,149,0,.1);}
+.last-updated{font-size:11px;color:rgba(255,255,255,.2);}
 </style>
 </head>
 <body>
 
-<!-- Login Screen -->
-<div class="login-box" id="loginBox">
-  <h1>🔐 Admin Panel</h1>
-  <input type="password" id="pwdInput" placeholder="Enter password" onkeyup="if(event.key==='Enter')login()">
-  <button onclick="login()">Login</button>
-  <div class="error" id="loginError"></div>
+<!-- ═══ LOGIN SCREEN ═══ -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="logo">🏆</div>
+    <h1>Admin Panel</h1>
+    <p>Cup Game Dashboard</p>
+    <input type="password" class="login-input" id="pwdInput" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <button class="login-btn" onclick="doLogin()">🔐 Login</button>
+    <div class="login-err" id="loginErr">❌ Wrong password!</div>
+  </div>
 </div>
 
-<!-- Admin Panel -->
-<div class="panel" id="adminPanel">
-  <h1>📊 Jaiclub Admin</h1>
-  
-  <!-- Date Selection -->
-  <div class="section">
-    <h2>📅 Select Date</h2>
-    <input type="date" id="adminDate" onchange="loadAdminData()">
+<!-- ═══ DASHBOARD ═══ -->
+<div id="dashboard">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="brand"><span>🏆</span> Cup Game Admin</div>
+    <button class="logout-btn" onclick="doLogout()">Logout</button>
   </div>
-  
-  <!-- Stats -->
-  <div class="section">
-    <h2>📈 Stats</h2>
-    <div class="card-grid">
-      <div><label>Deposit Number</label><input type="number" id="aDepositNum" value="0"></div>
-      <div><label>Deposit Amount</label><input type="number" id="aDepositAmt" value="0"></div>
-      <div><label>Number of Bettors</label><input type="number" id="aBettors" value="0"></div>
-      <div><label>Total Bet</label><input type="number" id="aTotalBet" value="0"></div>
-      <div><label>First Deposit People</label><input type="number" id="aFirstPpl" value="0"></div>
-      <div><label>First Deposit Amount</label><input type="number" id="aFirstAmt" value="0"></div>
+
+  <div class="content">
+
+    <!-- Stats -->
+    <div class="section-title">📊 Live Statistics</div>
+    <div class="refresh-row">
+      <span class="last-updated" id="lastUpdated">–</span>
+      <button class="refresh-btn" onclick="loadStats()">↻ Refresh</button>
     </div>
-    <div class="btn-row">
-      <button class="btn btn-primary" onclick="saveStats()">💾 Save Stats</button>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-val" id="s-visits">–</div>
+        <div class="stat-lbl">Total Visitors</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">💸</div>
+        <div class="stat-val" id="s-wdcount">–</div>
+        <div class="stat-lbl">Withdrawals</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-val" id="s-wdamt">–</div>
+        <div class="stat-lbl">Total Withdrawn</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🚪</div>
+        <div class="stat-val" id="s-abandons">–</div>
+        <div class="stat-lbl">Abandons</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📢</div>
+        <div class="stat-val" id="s-joins">–</div>
+        <div class="stat-lbl">Channel Joins</div>
+      </div>
     </div>
-  </div>
-  
-  <!-- Cards -->
-  <div class="section">
-    <h2>👥 User Cards</h2>
-    <div id="cardsList"></div>
-    <div class="btn-row">
-      <button class="btn btn-success" onclick="addCard()">➕ Add Card</button>
-      <button class="btn btn-primary" onclick="saveCards()">💾 Save All Cards</button>
+
+    <!-- Channel Manager -->
+    <div class="section-title">📋 Channel Manager</div>
+    <div class="channel-sets">
+
+      <!-- Set 1 -->
+      <div class="ch-set">
+        <div class="ch-set-title">📦 Set 1 (First batch)</div>
+        <div id="set0-rows"></div>
+      </div>
+
+      <!-- Set 2 -->
+      <div class="ch-set">
+        <div class="ch-set-title">📦 Set 2 (Second batch)</div>
+        <div id="set1-rows"></div>
+      </div>
+
+      <!-- Set 3 -->
+      <div class="ch-set">
+        <div class="ch-set-title">📦 Set 3 (Third batch)</div>
+        <div id="set2-rows"></div>
+      </div>
+
     </div>
-  </div>
-  
-  <div class="status-msg" id="statusMsg"></div>
-</div>
+    <button class="save-btn" onclick="saveChannels()">💾 Save Channels to Firebase</button>
+    <div><span class="save-toast" id="saveToast">✅ Channels saved successfully!</span></div>
+
+    <!-- Withdrawals -->
+    <div class="section-title">📤 Withdrawal Records</div>
+    <div class="wd-table-wrap">
+      <table class="wd-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>UPI</th>
+            <th>Amount</th>
+            <th>Time</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="wdTableBody">
+          <tr><td colspan="6" class="no-data">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /dashboard -->
 
 <script>
-const ADMIN_PWD = 'admin123';
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDummy",
-  authDomain: "jaiclub-data.firebaseapp.com",
-  databaseURL: "https://jaiclub-data-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "jaiclub-data",
-  storageBucket: "jaiclub-data.appspot.com",
-  messagingSenderId: "000000000",
-  appId: "1:000:web:000"
-};
-firebase.initializeApp(firebaseConfig);
+// ─── FIREBASE ───
+const fbApp = firebase.initializeApp({
+  databaseURL: "https://jaiclub-data-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
 const db = firebase.database();
 
-let cards = [];
+// ─── AUTH ───
+const ADMIN_PASSWORD = 'mayur123';
 
-function login() {
+function doLogin(){
   const pwd = document.getElementById('pwdInput').value;
-  if (pwd === ADMIN_PWD) {
-    document.getElementById('loginBox').style.display = 'none';
-    document.getElementById('adminPanel').classList.add('active');
-    // Set date to yesterday
-    const y = new Date();
-    y.setDate(y.getDate() - 1);
-    document.getElementById('adminDate').value = y.toISOString().split('T')[0];
-    loadAdminData();
+  if(pwd === ADMIN_PASSWORD){
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    sessionStorage.setItem('adminAuth', '1');
+    initDashboard();
   } else {
-    document.getElementById('loginError').textContent = 'Wrong password!';
+    const err = document.getElementById('loginErr');
+    err.style.display = 'block';
+    setTimeout(() => err.style.display = 'none', 2500);
   }
 }
 
-function loadAdminData() {
-  const date = document.getElementById('adminDate').value;
-  if (!date) return;
-  
-  db.ref(`dates/${date}`).once('value').then(snap => {
+function doLogout(){
+  sessionStorage.removeItem('adminAuth');
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('pwdInput').value = '';
+}
+
+// Check if already logged in this session
+if(sessionStorage.getItem('adminAuth') === '1'){
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+}
+
+// ─── DEFAULT CHANNEL DATA ───
+const defaultChannels = [
+  [
+    {icon:'📢', name:'Gaming Zone Official',  mem:'32.4K members', url:'https://t.me/yourchannel1'},
+    {icon:'🎮', name:'Win Real Cash Daily',   mem:'18.7K members', url:'https://t.me/yourchannel2'},
+    {icon:'💰', name:'Earn & Win India',       mem:'27.1K members', url:'https://t.me/yourchannel3'},
+  ],
+  [
+    {icon:'🏆', name:'Lucky Draw Club',        mem:'22.5K members', url:'https://t.me/yourchannel4'},
+    {icon:'🎯', name:'Cash Prize Arena',       mem:'15.3K members', url:'https://t.me/yourchannel5'},
+    {icon:'💎', name:'VIP Bonus Zone',         mem:'31.8K members', url:'https://t.me/yourchannel6'},
+  ],
+  [
+    {icon:'🔥', name:'Mega Win India',         mem:'41.2K members', url:'https://t.me/yourchannel7'},
+    {icon:'⚡', name:'Daily Free Bonus',       mem:'19.5K members', url:'https://t.me/yourchannel8'},
+    {icon:'🎁', name:'Prize Master Official',  mem:'28.9K members', url:'https://t.me/yourchannel9'},
+  ]
+];
+
+// ─── INIT DASHBOARD ───
+function initDashboard(){
+  loadStats();
+  loadChannels();
+  loadWithdrawals();
+}
+
+if(sessionStorage.getItem('adminAuth') === '1'){
+  initDashboard();
+}
+
+// ─── STATS ───
+function loadStats(){
+  db.ref('cupGame/stats').once('value').then(snap => {
     const data = snap.val() || {};
-    
-    // Stats
-    const s = data.stats || {};
-    document.getElementById('aDepositNum').value = s.depositNum || 0;
-    document.getElementById('aDepositAmt').value = s.depositAmt || 0;
-    document.getElementById('aBettors').value = s.bettors || 0;
-    document.getElementById('aTotalBet').value = s.totalBet || 0;
-    document.getElementById('aFirstPpl').value = s.firstPpl || 0;
-    document.getElementById('aFirstAmt').value = s.firstAmt || 0;
-    
-    // Cards
-    cards = [];
-    if (data.cards) {
-      Object.values(data.cards).forEach(c => {
-        cards.push({ uid: c.uid || '', level: c.level || 1, deposit: c.deposit || 0, commission: c.commission || 0 });
-      });
-    }
-    renderAdminCards();
-    showStatus('Data loaded!', 'success');
+    document.getElementById('s-visits').textContent  = (data.visits || 0).toLocaleString();
+    document.getElementById('s-abandons').textContent = (data.abandons || 0).toLocaleString();
+    document.getElementById('s-wdamt').textContent   = '₹' + (data.totalWithdrawn || 0).toLocaleString();
+
+    // Count withdrawal records
+    const wdCount = data.withdrawals ? Object.keys(data.withdrawals).length : 0;
+    document.getElementById('s-wdcount').textContent = wdCount.toLocaleString();
+
+    // Sum channel joins across batches
+    const joins = data.channelJoins || {};
+    const totalJoins = (joins.batch0||0) + (joins.batch1||0) + (joins.batch2||0);
+    document.getElementById('s-joins').textContent = totalJoins.toLocaleString();
+
+    document.getElementById('lastUpdated').textContent = 'Updated: ' + new Date().toLocaleTimeString();
   });
 }
 
-function renderAdminCards() {
-  const list = document.getElementById('cardsList');
-  list.innerHTML = cards.map((c, i) => `
-    <div class="card-entry">
-      <div class="card-header">
-        <span>Card #${i + 1}</span>
-        <button class="btn btn-danger" style="padding:4px 10px;font-size:12px" onclick="removeCard(${i})">✕</button>
-      </div>
-      <div class="card-grid">
-        <div><label>UID</label><input value="${c.uid}" onchange="cards[${i}].uid=this.value"></div>
-        <div><label>Level</label><input type="number" value="${c.level}" min="1" max="6" onchange="cards[${i}].level=parseInt(this.value)"></div>
-        <div><label>Deposit</label><input type="number" value="${c.deposit}" onchange="cards[${i}].deposit=parseFloat(this.value)"></div>
-        <div><label>Commission</label><input type="number" step="0.01" value="${c.commission}" onchange="cards[${i}].commission=parseFloat(this.value)"></div>
-      </div>
-    </div>
-  `).join('');
+// ─── CHANNEL MANAGER ───
+function renderSetInputs(setIdx, channels){
+  const container = document.getElementById('set'+setIdx+'-rows');
+  container.innerHTML = '';
+  for(let i=0;i<3;i++){
+    const ch = channels[i] || {icon:'📢',name:'',mem:'',url:''};
+    const row = document.createElement('div');
+    row.className = 'ch-row';
+    row.innerHTML = `
+      <input class="ch-input ch-input-icon" type="text" 
+        id="s${setIdx}_${i}_icon" value="${escHtml(ch.icon)}" placeholder="📢" title="Emoji icon"/>
+      <input class="ch-input" type="text"
+        id="s${setIdx}_${i}_name" value="${escHtml(ch.name)}" placeholder="Channel Name"/>
+      <input class="ch-input" type="text"
+        id="s${setIdx}_${i}_mem" value="${escHtml(ch.mem)}" placeholder="32.4K members"/>
+      <input class="ch-input ch-url" type="url"
+        id="s${setIdx}_${i}_url" value="${escHtml(ch.url)}" placeholder="https://t.me/..."/>
+    `;
+    container.appendChild(row);
+  }
 }
 
-function addCard() {
-  cards.push({ uid: '', level: 1, deposit: 0, commission: 0 });
-  renderAdminCards();
+function loadChannels(){
+  db.ref('cupGame/channels').once('value').then(snap => {
+    const data = snap.val();
+    for(let s=0;s<3;s++){
+      const set = (data && data['set'+s]) ? data['set'+s] : defaultChannels[s];
+      renderSetInputs(s, set);
+    }
+  }).catch(() => {
+    // Firebase failed - use defaults
+    for(let s=0;s<3;s++) renderSetInputs(s, defaultChannels[s]);
+  });
 }
 
-function removeCard(i) {
-  cards.splice(i, 1);
-  renderAdminCards();
+function saveChannels(){
+  const sets = {};
+  for(let s=0;s<3;s++){
+    sets['set'+s] = [];
+    for(let i=0;i<3;i++){
+      sets['set'+s].push({
+        icon: document.getElementById(`s${s}_${i}_icon`).value.trim() || '📢',
+        name: document.getElementById(`s${s}_${i}_name`).value.trim(),
+        mem:  document.getElementById(`s${s}_${i}_mem`).value.trim(),
+        url:  document.getElementById(`s${s}_${i}_url`).value.trim(),
+      });
+    }
+  }
+  db.ref('cupGame/channels').set(sets).then(() => {
+    const toast = document.getElementById('saveToast');
+    toast.style.opacity = '1';
+    setTimeout(() => toast.style.opacity = '0', 3000);
+  }).catch(err => {
+    alert('Save failed: ' + err.message);
+  });
 }
 
-function saveStats() {
-  const date = document.getElementById('adminDate').value;
-  if (!date) return showStatus('Select a date first!', 'error');
-  
-  const stats = {
-    depositNum: parseInt(document.getElementById('aDepositNum').value) || 0,
-    depositAmt: parseInt(document.getElementById('aDepositAmt').value) || 0,
-    bettors: parseInt(document.getElementById('aBettors').value) || 0,
-    totalBet: parseInt(document.getElementById('aTotalBet').value) || 0,
-    firstPpl: parseInt(document.getElementById('aFirstPpl').value) || 0,
-    firstAmt: parseInt(document.getElementById('aFirstAmt').value) || 0,
-  };
-  
-  db.ref(`dates/${date}/stats`).set(stats).then(() => {
-    showStatus('Stats saved! ✅', 'success');
-  }).catch(e => showStatus('Error: ' + e.message, 'error'));
+// ─── WITHDRAWALS ───
+function loadWithdrawals(){
+  db.ref('cupGame/stats/withdrawals').once('value').then(snap => {
+    const data = snap.val();
+    const tbody = document.getElementById('wdTableBody');
+    if(!data){
+      tbody.innerHTML = '<tr><td colspan="6" class="no-data">No withdrawals yet.</td></tr>';
+      return;
+    }
+    const records = Object.entries(data)
+      .map(([k,v]) => ({...v, key:k}))
+      .sort((a,b) => (b.timestamp||0) - (a.timestamp||0));
+
+    tbody.innerHTML = records.map((r,idx) => `
+      <tr>
+        <td>${idx+1}</td>
+        <td><strong>${escHtml(r.name||'-')}</strong></td>
+        <td style="color:rgba(255,149,0,.8)">${escHtml(r.upi||'-')}</td>
+        <td><strong style="color:#00cc66">₹${(r.amt||0).toLocaleString()}</strong></td>
+        <td style="font-size:11px;color:rgba(255,255,255,.4)">${r.time ? new Date(r.time).toLocaleString('en-IN') : '-'}</td>
+        <td><span class="wd-badge">Processing</span></td>
+      </tr>
+    `).join('');
+  });
 }
 
-function saveCards() {
-  const date = document.getElementById('adminDate').value;
-  if (!date) return showStatus('Select a date first!', 'error');
-  
-  const cardsObj = {};
-  cards.forEach((c, i) => { cardsObj[`card${i}`] = c; });
-  
-  db.ref(`dates/${date}/cards`).set(cardsObj).then(() => {
-    showStatus(`${cards.length} cards saved! ✅`, 'success');
-  }).catch(e => showStatus('Error: ' + e.message, 'error'));
-}
-
-function showStatus(msg, type) {
-  const el = document.getElementById('statusMsg');
-  el.textContent = msg;
-  el.className = `status-msg show ${type}`;
-  setTimeout(() => el.classList.remove('show'), 3000);
+// ─── HELPERS ───
+function escHtml(str){
+  if(!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 </script>
 </body>

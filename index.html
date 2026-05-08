@@ -1,598 +1,540 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Jaiclub</title>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, Roboto, 'PingFang SC', miui, 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
-    background: #1a1a2c;
-    color: #d7d7d7;
-    min-height: 100vh;
-    max-width: 430px;
-    margin: 0 auto;
-    -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Win ₹500 – Cup Challenge</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  /* Navbar */
-  .navbar {
-    display: flex; align-items: center;
-    padding: 14px 12px;
-    position: sticky; top: 0; z-index: 10;
-    background: #1a1a2c;
-  }
-  .navbar .back-btn {
-    background: none; border: none; color: #fff;
-    font-size: 28px; cursor: pointer; padding: 0 8px 0 0;
-    line-height: 1;
-  }
-  .navbar h1 {
-    flex: 1; text-align: center; font-size: 19px;
-    font-weight: 400; color: #fff; margin-right: 36px;
-  }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #0a0a1a;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
 
-  /* Search Bar */
-  .search-bar {
-    margin: 0 12px 10px;
-    display: flex; align-items: center;
-    background: #22224b;
-    border-radius: 8px;
-    height: 44px;
-    overflow: hidden;
-  }
-  .search-bar input {
-    flex: 1; padding: 0 14px;
-    background: transparent; border: none;
-    color: #fff; font-size: 15px; outline: none;
-  }
-  .search-bar input::placeholder { color: rgba(255,255,255,0.35); }
-  .search-bar .search-icon-wrap {
-    background: rgba(160,143,255,0.25);
-    border: none; padding: 0; margin-right: 6px;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    width: 40px; height: 32px; border-radius: 8px;
-  }
-  .search-bar .search-icon-wrap svg { width: 20px; height: 20px; fill: #000; }
+    /* ── Animated Background ── */
+    .bg-gradient {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 15% 10%, rgba(0,180,80,0.18) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 85%, rgba(255,180,0,0.10) 0%, transparent 55%),
+        radial-gradient(ellipse at 50% 50%, rgba(0,100,40,0.08) 0%, transparent 70%),
+        linear-gradient(160deg, #080f0a 0%, #0c1a10 40%, #0a130d 100%);
+      z-index: 0;
+    }
 
-  /* Filters */
-  .filters {
-    display: flex; gap: 10px;
-    margin: 0 12px 12px;
-  }
-  .filter-btn {
-    flex: 1; padding: 10px 14px;
-    background: #22224b; border: none;
-    border-radius: 8px; color: #d7d7d7;
-    font-size: 14px; cursor: pointer;
-    text-align: left;
-    position: relative;
-  }
-  .filter-btn::after {
-    content: '▾'; position: absolute; right: 12px; top: 50%;
-    transform: translateY(-50%); color: #888; font-size: 12px;
-  }
+    /* Floating sparkle particles */
+    .particles { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      animation: sparkle-float linear infinite;
+      opacity: 0;
+    }
+    @keyframes sparkle-float {
+      0%   { transform: translateY(100vh) scale(0) rotate(0deg); opacity: 0; }
+      8%   { opacity: 0.9; }
+      92%  { opacity: 0.4; }
+      100% { transform: translateY(-8vh) scale(0.8) rotate(180deg); opacity: 0; }
+    }
 
-  /* Stats Card */
-  .stats-card {
-    margin: 0 12px 12px;
-    background: #a08fff;
-    border-radius: 10px;
-    padding: 20px 0;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
-  .stat-item {
-    padding: 8px 12px;
-    text-align: center;
-    position: relative;
-  }
-  .stat-item:nth-child(odd) { border-right: 1px solid rgba(0,0,0,0.12); }
-  .stat-item:nth-child(1), .stat-item:nth-child(2) { border-bottom: 1px solid rgba(0,0,0,0.12); }
-  .stat-item:nth-child(3), .stat-item:nth-child(4) { border-bottom: 1px solid rgba(0,0,0,0.12); }
-  .stat-number { font-size: 22px; font-weight: 700; color: #fff; line-height: 1.2; }
-  .stat-label { font-size: 12px; color: rgba(255,255,255,0.85); margin-top: 4px; }
+    /* ── Main Container ── */
+    .container {
+      position: relative;
+      z-index: 10;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 20px 30px;
+    }
 
-  /* Loading spinner */
-  .loading-spinner {
-    text-align: center; padding: 12px 0; display: none;
-  }
-  .loading-spinner.active { display: block; }
-  .loading-spinner::after {
-    content: ''; display: inline-block;
-    width: 18px; height: 18px;
-    border: 2px solid rgba(255,255,255,0.3);
-    border-top-color: #fff;
-    border-radius: 50%;
-    animation: spin 0.6s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
+    /* ── Live Ticker ── */
+    .live-ticker {
+      width: 100%;
+      max-width: 380px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(78,255,145,0.25);
+      border-radius: 12px;
+      padding: 9px 14px;
+      margin-bottom: 14px;
+      margin-top: -6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      overflow: hidden;
+      animation: fadeDown 0.7s ease both;
+    }
+    .ticker-dot {
+      width: 8px; height: 8px;
+      background: #4eff91;
+      border-radius: 50%;
+      flex-shrink: 0;
+      animation: blink 1s ease infinite;
+      box-shadow: 0 0 8px #4eff91;
+    }
+    .ticker-scroll {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+      height: 20px;
+    }
+    .ticker-inner {
+      display: flex;
+      gap: 60px;
+      white-space: nowrap;
+      animation: ticker-move 45s linear infinite;
+      position: absolute;
+      top: 0; left: 0;
+    }
+    .ticker-inner span {
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.85);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+    .ticker-inner span .t-name { color: #4eff91; }
+    .ticker-inner span .t-amt  { color: #ffd700; }
+    @keyframes ticker-move {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
 
-  /* User Cards */
-  .user-list { padding: 0 12px 100px; }
-  .user-card {
-    background: #2a2a4a;
-    border-radius: 5px;
-    margin-bottom: 12px;
-    padding: 0 11px;
-    border: 1px solid #3e3e60;
-  }
-  .user-card-header {
-    display: flex; align-items: center;
-    padding: 5px 0 0;
-    border-bottom: 1px solid #4c4380;
-    height: 37px;
-  }
-  .uid { font-size: 16px; font-weight: 400; color: #fff; }
-  .copy-btn {
-    background: none; border: none; cursor: pointer;
-    margin-left: 2px; display: flex; align-items: center;
-    padding: 4px;
-  }
-  .copy-btn svg { width: 18px; height: 18px; }
-  .user-rows { padding: 12px 0; }
-  .user-row {
-    display: flex; justify-content: space-between; align-items: center;
-    height: 16px;
-  }
-  .user-row + .user-row { margin-top: 12px; }
-  .user-row-label { color: #d7d7d7; font-size: 14px; }
-  .user-row-value { color: #e0a050; font-size: 14px; }
-  .user-row-value.level { color: #d7d7d7; }
-  .user-row-value.time { color: #8a8aa8; font-size: 13px; }
+    /* ── Top Badge ── */
+    .top-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,215,0,0.12);
+      border: 1px solid rgba(255,215,0,0.35);
+      border-radius: 30px;
+      padding: 6px 18px;
+      margin-bottom: 28px;
+      animation: fadeDown 0.8s ease both;
+    }
+    .top-badge .dot {
+      width: 8px; height: 8px;
+      background: #4eff91;
+      border-radius: 50%;
+      animation: blink 1.2s ease infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .top-badge span {
+      font-size: 12px;
+      font-weight: 600;
+      color: #ffd700;
+      letter-spacing: 0.5px;
+    }
 
-  .no-more { text-align: center; padding: 20px 0; color: #666; font-size: 13px; }
+    /* ── Trophy / Icon ── */
+    .hero-icon {
+      font-size: 90px;
+      line-height: 1;
+      margin-bottom: 10px;
+      animation: fadeDown 0.9s ease both 0.1s, glow-icon 3s ease-in-out infinite 1.5s;
+      filter: drop-shadow(0 0 24px rgba(255,215,0,0.5));
+    }
+    @keyframes glow-icon {
+      0%,100% { filter: drop-shadow(0 0 24px rgba(255,215,0,0.5)); transform: scale(1); }
+      50%      { filter: drop-shadow(0 0 48px rgba(255,215,0,0.9)); transform: scale(1.08); }
+    }
 
-  /* Date Picker Overlay */
-  .picker-overlay {
-    display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.6); z-index: 100;
-    justify-content: center; align-items: flex-end;
-  }
-  .picker-overlay.active { display: flex; }
-  .picker-box {
-    background: #1e1e3a; width: 100%; max-width: 430px;
-    border-radius: 14px 14px 0 0; padding: 0;
-    animation: slideUp 0.25s ease;
-  }
-  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-  .picker-header {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 14px 20px; border-bottom: 1px solid #333;
-  }
-  .picker-header button {
-    background: none; border: none; font-size: 16px; cursor: pointer; padding: 4px 8px;
-  }
-  .picker-cancel { color: #888; }
-  .picker-confirm { color: #a08fff; }
-  .picker-wheels {
-    display: flex; height: 200px; overflow: hidden;
-    position: relative;
-  }
-  .picker-wheels::before, .picker-wheels::after {
-    content: ''; position: absolute; left: 0; right: 0;
-    height: 80px; z-index: 2; pointer-events: none;
-  }
-  .picker-wheels::before { top: 0; background: linear-gradient(#1e1e3a, transparent); }
-  .picker-wheels::after { bottom: 0; background: linear-gradient(transparent, #1e1e3a); }
-  .picker-wheel {
-    flex: 1; overflow-y: scroll; text-align: center;
-    scroll-snap-type: y mandatory;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-  .picker-wheel::-webkit-scrollbar { display: none; }
-  .picker-wheel .item {
-    height: 40px; line-height: 40px;
-    scroll-snap-align: center;
-    color: #666; font-size: 16px;
-    transition: color 0.15s;
-  }
-  .picker-wheel .item.selected { color: #fff; font-weight: 500; }
-  .wheel-highlight {
-    position: absolute; top: 50%; left: 0; right: 0;
-    height: 40px; transform: translateY(-50%);
-    border-top: 1px solid #444; border-bottom: 1px solid #444;
-    pointer-events: none; z-index: 1;
-  }
+    /* ── Headline ── */
+    .headline {
+      text-align: center;
+      animation: fadeUp 0.9s ease both 0.2s;
+      margin-bottom: 16px;
+    }
+    .headline h1 {
+      font-size: 38px;
+      font-weight: 900;
+      line-height: 1.1;
+      background: linear-gradient(135deg, #ffe566, #ffa500, #ff6b35);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+    }
+    .headline h1 .rupee {
+      font-size: 44px;
+    }
+    .headline .sub {
+      margin-top: 8px;
+      font-size: 15px;
+      color: rgba(255,255,255,0.65);
+      font-weight: 400;
+      letter-spacing: 0.3px;
+    }
 
-  /* Customer Service Float */
-  .cs-float {
-    position: fixed; bottom: 24px; right: 20px;
-    width: 60px; height: 60px;
-    border-radius: 50%; border: none; cursor: pointer;
-    z-index: 20; background: none; padding: 0;
-    transition: transform 0.2s;
-  }
-  .cs-float:hover { transform: scale(1.1); }
-  .cs-float img {
-    width: 60px; height: 60px; border-radius: 50%;
-    object-fit: cover;
-  }
-  /* Fallback if image not found */
-  .cs-float-fallback {
-    width: 60px; height: 60px; border-radius: 50%;
-    background: #5b7bf9; display: flex; align-items: center; justify-content: center;
-  }
-  .cs-float-fallback svg { width: 28px; height: 28px; fill: #fff; }
+    /* ── Prize Cards ── */
+    .prize-row {
+      display: flex;
+      gap: 12px;
+      margin: 24px 0;
+      animation: fadeUp 0.9s ease both 0.35s;
+      width: 100%;
+      max-width: 360px;
+    }
+    .prize-card {
+      flex: 1;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 14px 10px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      transition: transform 0.3s;
+    }
+    .prize-card:hover { transform: translateY(-4px); }
+    .prize-card .cup-emoji { font-size: 28px; margin-bottom: 6px; }
+    .prize-card .amount {
+      font-size: 18px;
+      font-weight: 800;
+      color: #ffd700;
+    }
+    .prize-card .label {
+      font-size: 10px;
+      color: rgba(255,255,255,0.45);
+      margin-top: 2px;
+    }
+    .prize-card.featured {
+      background: linear-gradient(135deg, rgba(255,165,0,0.18), rgba(255,100,0,0.12));
+      border-color: rgba(255,165,0,0.45);
+      transform: scale(1.05);
+    }
+    .prize-card.featured:hover { transform: scale(1.05) translateY(-4px); }
+    .prize-card.featured .amount { font-size: 22px; color: #ff9500; }
 
-  /* Level Picker */
-  .level-overlay {
-    display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.4); z-index: 100;
-  }
-  .level-overlay.active { display: flex; justify-content: center; align-items: flex-end; }
-  .level-box {
-    background: #1e1e3a; width: 100%; max-width: 430px;
-    border-radius: 14px 14px 0 0; padding: 10px 0;
-    animation: slideUp 0.25s ease;
-  }
-  .level-option {
-    padding: 14px 20px; color: #d7d7d7; font-size: 15px;
-    cursor: pointer; text-align: center;
-    border-bottom: 1px solid #2a2a4a;
-  }
-  .level-option:hover, .level-option.active { color: #a08fff; }
-</style>
+    /* ── Features ── */
+    .features {
+      width: 100%;
+      max-width: 360px;
+      margin-bottom: 32px;
+      animation: fadeUp 0.9s ease both 0.45s;
+    }
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .feature-item:last-child { border-bottom: none; }
+    .feature-icon {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .fi-green  { background: rgba(78,255,145,0.12); }
+    .fi-blue   { background: rgba(78,145,255,0.12); }
+    .fi-orange { background: rgba(255,165,78,0.12); }
+    .fi-purple { background: rgba(178,78,255,0.12); }
+    .feature-text h4 {
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.9);
+    }
+    .feature-text p {
+      font-size: 11px;
+      color: rgba(255,255,255,0.45);
+      margin-top: 1px;
+    }
+
+    /* ── CTA Button ── */
+    .cta-wrap {
+      width: 100%;
+      max-width: 360px;
+      animation: fadeUp 0.9s ease both 0.55s;
+    }
+    .cta-btn {
+      width: 100%;
+      padding: 18px;
+      border: none;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #ff9500, #ff5500);
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(255,100,0,0.45), 0 0 0 0 rgba(255,100,0,0.4);
+      animation: pulse-btn 2s ease-in-out infinite 1.5s;
+      transition: transform 0.15s, box-shadow 0.15s;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .cta-btn:active {
+      transform: scale(0.97);
+      box-shadow: 0 4px 15px rgba(255,100,0,0.4);
+    }
+    @keyframes pulse-btn {
+      0%,100% { box-shadow: 0 8px 30px rgba(255,100,0,0.45), 0 0 0 0 rgba(255,100,0,0.4); }
+      50%      { box-shadow: 0 8px 30px rgba(255,100,0,0.45), 0 0 0 14px rgba(255,100,0,0); }
+    }
+    /* Shimmer on button */
+    .cta-btn::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 60%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+      animation: shimmer 2.5s ease infinite 2s;
+    }
+    @keyframes shimmer {
+      0%   { left: -100%; }
+      100% { left: 200%; }
+    }
+
+    .cta-note {
+      text-align: center;
+      margin-top: 12px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.35);
+    }
+    .cta-note span { color: #4eff91; font-weight: 600; }
+
+    /* ── Stats Row ── */
+    .stats-row {
+      display: flex;
+      gap: 20px;
+      margin: 28px 0 0;
+      animation: fadeUp 0.9s ease both 0.65s;
+    }
+    .stat-item { text-align: center; }
+    .stat-num {
+      font-size: 22px;
+      font-weight: 800;
+      color: #ffd700;
+    }
+    .stat-lbl {
+      font-size: 10px;
+      color: rgba(255,255,255,0.4);
+      margin-top: 2px;
+    }
+    .stat-divider {
+      width: 1px;
+      background: rgba(255,255,255,0.12);
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Glow Ring ── */
+    .glow-ring {
+      position: absolute;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,150,0,0.08) 0%, transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      animation: ring-pulse 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes ring-pulse {
+      0%,100% { transform: translate(-50%,-50%) scale(1); opacity: 0.6; }
+      50%      { transform: translate(-50%,-50%) scale(1.3); opacity: 0.2; }
+    }
+  </style>
 </head>
 <body>
 
-<!-- Navbar -->
-<div class="navbar">
-  <button class="back-btn" onclick="history.back()">‹</button>
-  <h1>Subordinate data</h1>
-</div>
+<div class="bg-gradient"></div>
+<div class="particles" id="particles"></div>
+<div class="glow-ring"></div>
 
-<!-- Search -->
-<div class="search-bar">
-  <input type="text" placeholder="Search subordinate UID" id="searchInput">
-  <button class="search-icon-wrap" onclick="searchUID()">
-    <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-  </button>
-</div>
+<div class="container">
 
-<!-- Filters -->
-<div class="filters">
-  <button class="filter-btn" id="levelBtn" onclick="showLevelPicker()">All</button>
-  <button class="filter-btn" id="dateBtn" onclick="showDatePicker()">Select date</button>
-</div>
-
-<!-- Stats Card -->
-<div class="stats-card">
-  <div class="stat-item">
-    <div class="stat-number" id="statDepositNum">0</div>
-    <div class="stat-label">Deposit number</div>
-  </div>
-  <div class="stat-item">
-    <div class="stat-number" id="statDepositAmt">0</div>
-    <div class="stat-label">Deposit amount</div>
-  </div>
-  <div class="stat-item">
-    <div class="stat-number" id="statBettors">0</div>
-    <div class="stat-label">Number of bettors</div>
-  </div>
-  <div class="stat-item">
-    <div class="stat-number" id="statTotalBet">0</div>
-    <div class="stat-label">Total bet</div>
-  </div>
-  <div class="stat-item">
-    <div class="stat-number" id="statFirstDepPpl">0</div>
-    <div class="stat-label">Number of people making first deposit</div>
-  </div>
-  <div class="stat-item">
-    <div class="stat-number" id="statFirstDepAmt">0</div>
-    <div class="stat-label">First deposit amount</div>
-  </div>
-</div>
-
-<!-- Loading Spinner -->
-<div class="loading-spinner" id="spinner"></div>
-
-<!-- User Cards -->
-<div class="user-list" id="userList"></div>
-
-<!-- Customer Service Float -->
-<button class="cs-float" id="csFloat">
-  <img src="icon_sevice.webp" onerror="this.parentElement.innerHTML='<div class=cs-float-fallback><svg viewBox=&quot;0 0 24 24&quot;><path d=&quot;M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z&quot;/><path d=&quot;M7 9h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2z&quot;/></svg></div>'">
-</button>
-
-<!-- Date Picker -->
-<div class="picker-overlay" id="pickerOverlay">
-  <div class="picker-box">
-    <div class="picker-header">
-      <button class="picker-cancel" onclick="closeDatePicker()">Cancel</button>
-      <button class="picker-confirm" onclick="confirmDate()">Confirm</button>
-    </div>
-    <div class="picker-wheels">
-      <div class="wheel-highlight"></div>
-      <div class="picker-wheel" id="yearWheel"></div>
-      <div class="picker-wheel" id="monthWheel"></div>
-      <div class="picker-wheel" id="dayWheel"></div>
+  <!-- Live Withdrawal Ticker -->
+  <div class="live-ticker">
+    <div class="ticker-dot"></div>
+    <div class="ticker-scroll">
+      <div class="ticker-inner" id="tickerInner">
+        <!-- filled by JS -->
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Level Picker -->
-<div class="level-overlay" id="levelOverlay" onclick="closeLevelPicker()">
-  <div class="level-box" onclick="event.stopPropagation()">
-    <div class="level-option active" onclick="selectLevel('all')">All</div>
-    <div class="level-option" onclick="selectLevel(1)">Level 1</div>
-    <div class="level-option" onclick="selectLevel(2)">Level 2</div>
-    <div class="level-option" onclick="selectLevel(3)">Level 3</div>
-    <div class="level-option" onclick="selectLevel(4)">Level 4</div>
+  <!-- Top badge -->
+  <div class="top-badge">
+    <div class="dot"></div>
+    <span>🔴 LIVE · 2,847 Players Active</span>
   </div>
+
+  <!-- Hero Icon -->
+  <div class="hero-icon">🏆</div>
+
+  <!-- Headline -->
+  <div class="headline">
+    <h1>Play Game &amp;<br>Win <span class="rupee">₹500</span></h1>
+
+  </div>
+
+
+
+  <!-- Features -->
+  <div class="features">
+
+    <div class="feature-item">
+      <div class="feature-icon fi-green">🎁</div>
+      <div class="feature-text">
+        <h4>No Deposit Needed</h4>
+        <p>Start playing for free — no money required</p>
+      </div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon fi-blue">⚡</div>
+      <div class="feature-text">
+        <h4>Instant Withdrawal</h4>
+        <p>Direct to your UPI — no delays</p>
+      </div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon fi-orange">🔒</div>
+      <div class="feature-text">
+        <h4>100% Safe &amp; Secure</h4>
+        <p>Verified platform · Trusted by 50k+ users</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-wrap">
+    <a class="cta-btn" href="game.html">
+      🎮 Start Game
+    </a>
+    <p class="cta-note">✅ <span>No Deposit Needed</span> · Start Winning Instantly</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-item">
+      <div class="stat-num">52K+</div>
+      <div class="stat-lbl">Total Players</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <div class="stat-num">₹48L+</div>
+      <div class="stat-lbl">Total Paid Out</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <div class="stat-num">4.8★</div>
+      <div class="stat-lbl">User Rating</div>
+    </div>
+  </div>
+
 </div>
 
 <script>
-// Firebase Config
-const firebaseConfig = {
-  apiKey: "AIzaSyDummy",
-  authDomain: "jaiclub-data.firebaseapp.com",
-  databaseURL: "https://jaiclub-data-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "jaiclub-data",
-  storageBucket: "jaiclub-data.appspot.com",
-  messagingSenderId: "000000000",
-  appId: "1:000:web:000"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
-let currentDate = '';
-let currentLevel = 'all';
-let allCards = [];
-
-// --- Date Picker ---
-const now = new Date();
-const yesterday = new Date(now);
-yesterday.setDate(yesterday.getDate() - 1);
-
-function initDatePicker() {
-  const yWheel = document.getElementById('yearWheel');
-  const mWheel = document.getElementById('monthWheel');
-  const dWheel = document.getElementById('dayWheel');
-  
-  // Years 2020 to current
-  const currentYear = now.getFullYear();
-  yWheel.innerHTML = '<div class="item" style="height:80px"></div>';
-  for (let y = 2020; y <= currentYear; y++) {
-    yWheel.innerHTML += `<div class="item" data-val="${y}">${y}</div>`;
+  // ── Subtle sparkle particles ──
+  function createCoins() {
+    const container = document.getElementById('particles');
+    const colors = ['#4eff91','#ffd700','#00e676','#ffe566','#80ffb0','#00ff88'];
+    for (let i = 0; i < 30; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const size = 2 + Math.random() * 4;
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.width = size + 'px';
+      p.style.height = size + 'px';
+      p.style.background = color;
+      p.style.boxShadow = `0 0 ${size * 3}px ${color}, 0 0 ${size}px ${color}`;
+      p.style.animationDuration = (14 + Math.random() * 18) + 's';
+      p.style.animationDelay = (Math.random() * 15) + 's';
+      container.appendChild(p);
+    }
   }
-  yWheel.innerHTML += '<div class="item" style="height:80px"></div>';
-  
-  // Months
-  mWheel.innerHTML = '<div class="item" style="height:80px"></div>';
-  for (let m = 1; m <= 12; m++) {
-    mWheel.innerHTML += `<div class="item" data-val="${m}">${String(m).padStart(2,'0')}</div>`;
+  // ── Live Withdrawal Ticker ──
+  const withdrawals = [
+    { num: '+919026***75', amt: '₹500' },
+    { num: '+918837***42', amt: '₹500' },
+    { num: '+917903***88', amt: '₹500' },
+    { num: '+919512***31', amt: '₹500' },
+    { num: '+916305***67', amt: '₹500' },
+    { num: '+918765***19', amt: '₹500' },
+    { num: '+919821***54', amt: '₹500' },
+    { num: '+917654***03', amt: '₹500' },
+  ];
+
+  function buildTicker() {
+    const inner = document.getElementById('tickerInner');
+    // duplicate for seamless loop
+    const all = [...withdrawals, ...withdrawals];
+    inner.innerHTML = all.map(w =>
+      `<span>🎉 <span class="t-name">${w.num}</span> has withdrawn <span class="t-amt">${w.amt}</span> recently</span>`
+    ).join('');
   }
-  mWheel.innerHTML += '<div class="item" style="height:80px"></div>';
-  
-  buildDays(yesterday.getFullYear(), yesterday.getMonth() + 1);
-  
-  // Scroll to yesterday
-  setTimeout(() => {
-    scrollToValue(yWheel, yesterday.getFullYear());
-    scrollToValue(mWheel, yesterday.getMonth() + 1);
-    scrollToValue(dWheel, yesterday.getDate());
-  }, 100);
-  
-  // Scroll listeners
-  [yWheel, mWheel, dWheel].forEach(w => {
-    w.addEventListener('scroll', () => { updateSelected(w); });
+  buildTicker();
+
+  // Randomly update one entry every few seconds for live feel
+  const prefixes = ['+9190','+9188','+9179','+9195','+9163','+9187','+9198','+9176','+9183','+9199'];
+  const amts = ['₹500','₹100','₹50','₹500','₹500'];
+  setInterval(() => {
+    const idx = Math.floor(Math.random() * withdrawals.length);
+    const pre = prefixes[Math.floor(Math.random() * prefixes.length)];
+    const mid = String(Math.floor(Math.random()*900)+100);
+    const suf = String(Math.floor(Math.random()*90)+10);
+    withdrawals[idx].num = pre + '***' + suf;
+    withdrawals[idx].amt = '₹500';
+    buildTicker();
+  }, 5000);
+
+  createCoins();
+
+  // ── Live counter (fake but real-looking) ──
+  const badge = document.querySelector('.top-badge span');
+  let count = 2847;
+  setInterval(() => {
+    count += Math.floor(Math.random() * 5) - 2;
+    if (count < 2800) count = 2800;
+    badge.textContent = `🔴 LIVE · ${count.toLocaleString()} Players Active`;
+  }, 3000);
+
+  // ── Button tap ripple ──
+  document.querySelector('.cta-btn').addEventListener('click', function(e) {
+    const ripple = document.createElement('span');
+    const rect = this.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    ripple.style.cssText = `
+      position:absolute; border-radius:50%;
+      width:${size}px; height:${size}px;
+      left:${e.clientX - rect.left - size/2}px;
+      top:${e.clientY - rect.top - size/2}px;
+      background:rgba(255,255,255,0.3);
+      transform:scale(0); animation:ripple-out 0.5s ease forwards;
+      pointer-events:none;
+    `;
+    document.head.insertAdjacentHTML('beforeend',
+      '<style>@keyframes ripple-out{to{transform:scale(2);opacity:0}}</style>');
+    this.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 600);
   });
-}
-
-function buildDays(year, month) {
-  const dWheel = document.getElementById('dayWheel');
-  const maxDay = new Date(year, month, 0).getDate();
-  // Cap if this is current year & month — max is yesterday
-  let capDay = maxDay;
-  if (year === now.getFullYear() && month === now.getMonth() + 1) {
-    capDay = Math.min(maxDay, yesterday.getDate());
-  }
-  dWheel.innerHTML = '<div class="item" style="height:80px"></div>';
-  for (let d = 1; d <= capDay; d++) {
-    dWheel.innerHTML += `<div class="item" data-val="${d}">${String(d).padStart(2,'0')}</div>`;
-  }
-  dWheel.innerHTML += '<div class="item" style="height:80px"></div>';
-}
-
-function scrollToValue(wheel, val) {
-  const items = wheel.querySelectorAll('.item[data-val]');
-  for (const item of items) {
-    if (parseInt(item.dataset.val) === val) {
-      wheel.scrollTop = item.offsetTop - 80;
-      break;
-    }
-  }
-  updateSelected(wheel);
-}
-
-function updateSelected(wheel) {
-  const items = wheel.querySelectorAll('.item[data-val]');
-  const center = wheel.scrollTop + 100;
-  items.forEach(item => {
-    const itemCenter = item.offsetTop + 20;
-    if (Math.abs(itemCenter - center) < 20) {
-      item.classList.add('selected');
-    } else {
-      item.classList.remove('selected');
-    }
-  });
-}
-
-function getWheelValue(wheel) {
-  const selected = wheel.querySelector('.item.selected');
-  return selected ? parseInt(selected.dataset.val) : null;
-}
-
-function showDatePicker() {
-  document.getElementById('pickerOverlay').classList.add('active');
-}
-function closeDatePicker() {
-  document.getElementById('pickerOverlay').classList.remove('active');
-}
-function confirmDate() {
-  const y = getWheelValue(document.getElementById('yearWheel'));
-  const m = getWheelValue(document.getElementById('monthWheel'));
-  const d = getWheelValue(document.getElementById('dayWheel'));
-  if (y && m && d) {
-    // Validate not future
-    const picked = new Date(y, m - 1, d);
-    if (picked >= new Date(now.getFullYear(), now.getMonth(), now.getDate())) {
-      return; // can't pick today or future
-    }
-    currentDate = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    document.getElementById('dateBtn').textContent = currentDate;
-    closeDatePicker();
-    loadData();
-  }
-}
-
-// --- Level Picker ---
-function showLevelPicker() { document.getElementById('levelOverlay').classList.add('active'); }
-function closeLevelPicker() { document.getElementById('levelOverlay').classList.remove('active'); }
-function selectLevel(lvl) {
-  currentLevel = lvl;
-  const btn = document.getElementById('levelBtn');
-  btn.textContent = lvl === 'all' ? 'All' : `Level ${lvl}`;
-  // Update active state
-  document.querySelectorAll('.level-option').forEach(o => o.classList.remove('active'));
-  event.target.classList.add('active');
-  closeLevelPicker();
-  renderCards();
-}
-
-// --- Firebase Data ---
-function loadData() {
-  if (!currentDate) return;
-  
-  // Reset stats to 0 instantly
-  ['statDepositNum','statDepositAmt','statBettors','statTotalBet','statFirstDepPpl','statFirstDepAmt'].forEach(id => {
-    document.getElementById(id).textContent = '0';
-  });
-  document.getElementById('userList').innerHTML = '';
-  
-  // Show spinner
-  const spinner = document.getElementById('spinner');
-  spinner.classList.add('active');
-  
-  const ref = db.ref(`dates/${currentDate}`);
-  ref.once('value').then(snap => {
-    spinner.classList.remove('active');
-    const data = snap.val();
-    if (!data) {
-      renderCards();
-      return;
-    }
-    
-    // Stats
-    if (data.stats) {
-      const s = data.stats;
-      document.getElementById('statDepositNum').textContent = s.depositNum || 0;
-      document.getElementById('statDepositAmt').textContent = s.depositAmt || 0;
-      document.getElementById('statBettors').textContent = s.bettors || 0;
-      document.getElementById('statTotalBet').textContent = s.totalBet || 0;
-      document.getElementById('statFirstDepPpl').textContent = s.firstPpl || 0;
-      document.getElementById('statFirstDepAmt').textContent = s.firstAmt || 0;
-    }
-    
-    // Cards
-    allCards = [];
-    if (data.cards) {
-      Object.values(data.cards).forEach(c => {
-        allCards.push({
-          uid: c.uid || '',
-          level: c.level || 0,
-          deposit: c.deposit || 0,
-          commission: c.commission || 0,
-          time: currentDate
-        });
-      });
-    }
-    renderCards();
-  }).catch(() => {
-    spinner.classList.remove('active');
-  });
-}
-
-function renderCards() {
-  const list = document.getElementById('userList');
-  let cards = [...allCards];
-  if (currentLevel !== 'all') {
-    cards = cards.filter(c => c.level == currentLevel);
-  }
-  
-  if (cards.length === 0) {
-    list.innerHTML = '<div class="no-more">No data</div>';
-    return;
-  }
-  
-  list.innerHTML = cards.map(u => `
-    <div class="user-card">
-      <div class="user-card-header">
-        <span class="uid">UID:${u.uid}</span>
-        <button class="copy-btn" onclick="copyUID('${u.uid}')">
-          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="14" y="6" width="24" height="30" rx="4" stroke="#fff" stroke-width="3" fill="none"/>
-            <rect x="8" y="12" width="24" height="30" rx="4" stroke="#fff" stroke-width="3" fill="none"/>
-          </svg>
-        </button>
-      </div>
-      <div class="user-rows">
-        <div class="user-row">
-          <span class="user-row-label">Level</span>
-          <span class="user-row-value level">${u.level}</span>
-        </div>
-        <div class="user-row">
-          <span class="user-row-label">Deposit amount</span>
-          <span class="user-row-value">${u.deposit}</span>
-        </div>
-        <div class="user-row">
-          <span class="user-row-label">Commission</span>
-          <span class="user-row-value">${u.commission}</span>
-        </div>
-        <div class="user-row">
-          <span class="user-row-label">Time</span>
-          <span class="user-row-value time">${u.time}</span>
-        </div>
-      </div>
-    </div>
-  `).join('') + '<div class="no-more">No more</div>';
-}
-
-function searchUID() {
-  const q = document.getElementById('searchInput').value.trim();
-  if (!q) { renderCards(); return; }
-  const list = document.getElementById('userList');
-  const filtered = allCards.filter(c => c.uid.includes(q));
-  if (filtered.length === 0) {
-    list.innerHTML = '<div class="no-more">No data</div>';
-    return;
-  }
-  allCards = filtered;
-  renderCards();
-  allCards = [...filtered]; // restore after render
-}
-
-function copyUID(uid) {
-  navigator.clipboard.writeText(uid).catch(() => {});
-}
-
-document.getElementById('searchInput').addEventListener('keyup', e => {
-  if (e.key === 'Enter') searchUID();
-});
-
-// Init
-initDatePicker();
-
-// Auto-select yesterday
-currentDate = `${yesterday.getFullYear()}-${String(yesterday.getMonth()+1).padStart(2,'0')}-${String(yesterday.getDate()).padStart(2,'0')}`;
-document.getElementById('dateBtn').textContent = currentDate;
-loadData();
 </script>
 </body>
 </html>
